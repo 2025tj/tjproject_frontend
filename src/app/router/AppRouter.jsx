@@ -17,7 +17,11 @@ import PasswordResetPage from '../../features/auth/pages/PasswordResetPage'
 import { withAuthGuard } from '../../features/auth/components/withAuthGuard'
 import AuthRedirectHandler from '../../shared/utils/api/AuthRedirectHandler'
 // -------------------------------------------------------------------------
+// 관리자 페이지
 import Admin from "../../Admin";
+import  Inquiries from "../../ASide/Inquiries";
+import  Members from "../../ASide/Members";
+
 import Main from "../../Routes/Start";
 // import PageA from "./Routes/PageA";
 import Info from "../../Routes/Info";
@@ -34,45 +38,10 @@ import Footer from '../../Routes/Footer';
 import React, { useState } from 'react'
 import { fetchCompaniesByName, fetchCompaniesByType, setSearchTerm } from '../../redux/reducerSlices/companySearchSlice'
 import Chatbot from '../../ChatBot'
-import { Radio } from 'antd'
+// import { Radio } from 'antd'
 import SubscriptionManagement from '../../features/subscription/pages/SubscriptionManagement'
 import '../../App.css'
-// SearchBar 정의 부분
-// const SearchBar = React.memo(({ searchTerm, setSearchTerm, onSubmit, loading, searchType, setSearchType }) => { // (A) 여기서 받는 props는 onSubmit, loading, navigate 뿐입니다.
-//   // console.log("임포트확인:" ,setSearchTerm)
 
-//   return (
-//     <div className="search-bar-wrapper">
-//       {/* 라디오 버튼 추가 */}
-//       <Radio.Group
-//         value={searchType}
-//         onChange={e => setSearchType(e.target.value)}
-//         style={{ marginBottom: 8 }}
-//       >
-//         <Radio value="name">기업이름</Radio>
-//         <Radio value="type">분야</Radio>
-//       </Radio.Group>
-
-//       <form onSubmit={onSubmit} className="search-form">
-//         <input
-//           type="text"
-//           placeholder="회사명 입력하세요..."
-//           value={searchTerm} // (B) 이 searchTerm은 props가 아니라 App의 변수를 직접 사용하고 있습니다.
-//           onChange={(e) => setSearchTerm(e.target.value)} // (C) 이 setSearchTerm은 어디에도 정의되지 않은 변수라 에러가 발생합니다!
-//           disabled={loading}
-//           className="search-input"
-//         />
-//         <button
-//           type="submit"
-//           className="search-button"
-//           disabled={loading}
-//         >
-//           {loading ? "검색중..." : "검색"}
-//         </button>
-//       </form>
-//     </div>
-//   );
-// });
 
 const AppRouter = () => {
     const isAuthenticated = useSelector(state => state.auth.isAuthenticated)
@@ -144,10 +113,10 @@ const AppRouter = () => {
             // Content={Content}
             />
 
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow pb-32">
+            <main className="min-h bg-slate-200 max-w-7xl  px-4 sm:px-6 lg:px-4 py-3 flex-grow">
                
             
-            </main>
+            
             <Chatbot />
             <Routes>
                 <Route path="/" element={<Main />} />
@@ -193,13 +162,16 @@ const AppRouter = () => {
                 <Route path="/info" element={<Info />} />
                 <Route path="/mypage" element={<MyPage />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="/admin" element={<Admin />} />
+                <Route path="/admin" element={<Admin />} >
+                    <Route path='inquiries' element={<Inquiries/>}></Route>
+                    <Route path='members' element={<Members/>}></Route>
+                </Route>
                 {/* 상세페이지 */}
                 <Route path="/semi/*" element={<Semi />}>
                     {/* 기본 페이지 리디렉션 */}
                     <Route index element={<Navigate to="mention" replace />} />
                     <Route path="mention" element={<MentionPage />} />
-                    <Route path="company" element={<CompanyInfo />} />
+                    <Route path="company/:id" element={<CompanyInfo />} />
                     <Route path="reputation" element={<Reputation />} />
                     <Route path="association" element={<AssociationPage />} />
                     <Route path="comparekeyword" element={<CompareKeyword/>}/>
@@ -207,6 +179,7 @@ const AppRouter = () => {
                 {/* 구독관련 */}
                 <Route path="/subscription/manage" element={<ProtectedSubscriptionManagement />} />
             </Routes>
+            </main>
             <Footer />
         </>
     )

@@ -3,28 +3,17 @@ import React, { useState } from 'react';
 // import { SearchBar } from '../App'
 import Ranking from "../components/Ranking"
 import { fetchCompaniesByName, setSearchTerm, fetchCompaniesByType } from '../redux/reducerSlices/companySearchSlice';
-
+import '../CSS/carousel.css';
+import '../CSS/Search.css';
 
 import { Carousel } from 'react-bootstrap';
 import kakaoImg from '../images/kakao.png';
 import kiaImg from '../images/kia.png';
 import samsungImg from '../images/samsung.png';
-import '../CSS/carousel.css';
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 
-// const words = [
-//   { text: '카카오', value: 200 },
-//   { text: 'Google', value: 80 },
-//   { text: '네이버', value: 40 },
-//   { text: 'Amazon', value: 60 },
-//   { text: 'Samsung', value: 55 }, 
-//   { text: 'sns', value: 40 },
-//   { text: '롯데', value: 80 },
-//   { text: 'yahoo', value: 80 },
-//   { text: '다음', value: 40 },
-// ]
 // SearchBar 정의 부분
 const SearchBar = React.memo(({ searchTerm, setSearchTerm, onSubmit, loading, searchType, setSearchType }) => {
   return (<>

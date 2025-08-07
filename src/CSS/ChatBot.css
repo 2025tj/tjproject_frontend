@@ -192,7 +192,11 @@
   line-height: 1.4;
 }
 
-
+.chatbot-confirm-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
 
 .chatbot-confirm-btn {
   padding: 10px 20px;

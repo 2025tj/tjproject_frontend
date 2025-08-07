@@ -1,0 +1,336 @@
+.inquiries-container {
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: calc(100vh - 120px);
+  border-radius: 8px;
+}
+
+.inquiries-header {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.inquiries-header h2 {
+  color: #333;
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.inquiries-header p {
+  color: #666;
+  font-size: 16px;
+  margin: 0;
+}
+
+/* 상태별 요약 카드 스타일 */
+.status-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.status-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  min-width: 200px;
+  max-width: 300px;
+}
+
+.status-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.status-card.new {
+  border-top: 4px solid #ff4d4f;
+}
+
+.status-card.in-progress {
+  border-top: 4px solid #fa8c16;
+}
+
+.status-card.completed {
+  border-top: 4px solid #52c41a;
+}
+
+.status-card-content {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  justify-content: flex-start;
+}
+
+.status-icon {
+  font-size: 24px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.status-card.new .status-icon {
+  color: #ff4d4f;
+}
+
+.status-card.in-progress .status-icon {
+  color: #fa8c16;
+}
+
+.status-card.completed .status-icon {
+  color: #52c41a;
+}
+
+.status-info h3 {
+  margin: 0 0 4px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  white-space: nowrap;
+}
+
+.status-info .count {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1890ff;
+  white-space: nowrap;
+}
+
+/* 요청사항 콘텐츠 영역 */
+.inquiries-content {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.inquiries-tabs .ant-tabs-tab {
+  font-size: 16px;
+  font-weight: 500;
+  padding: 12px 20px;
+}
+
+.inquiries-tabs .ant-tabs-tab-active {
+  background-color: #f0f8ff;
+  border-radius: 8px;
+}
+
+/* 요청사항 목록 아이템 스타일 */
+.ant-list-item {
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  padding: 16px;
+  transition: all 0.3s ease;
+}
+
+.ant-list-item:hover {
+  border-color: #1890ff;
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.15);
+}
+
+.ant-list-item-meta-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.ant-list-item-meta-description {
+  color: #666;
+  line-height: 1.6;
+}
+
+/* 우선순위 태그 스타일 */
+.ant-tag {
+  border-radius: 4px;
+  font-weight: 500;
+  padding: 2px 8px;
+}
+
+/* 상태 배지 스타일 */
+.ant-badge-status-text {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* 모달 스타일 */
+.ant-modal-content {
+  border-radius: 12px;
+}
+
+.ant-modal-header {
+  border-radius: 12px 12px 0 0;
+  background-color: #f8f9fa;
+}
+
+.ant-modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.ant-descriptions-item-label {
+  font-weight: 600;
+  color: #333;
+  background-color: #f8f9fa;
+}
+
+.ant-descriptions-item-content {
+  color: #666;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1024px) {
+  .status-summary {
+    gap: 12px;
+  }
+  
+  .status-card {
+    min-width: 180px;
+    max-width: 250px;
+  }
+}
+
+@media (max-width: 768px) {
+  .inquiries-container {
+    padding: 15px;
+  }
+  
+  .status-summary {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .status-card {
+    min-width: 100%;
+    max-width: 100%;
+  }
+  
+  .status-card-content {
+    padding: 12px;
+  }
+  
+  .status-icon {
+    font-size: 22px;
+    margin-right: 12px;
+  }
+  
+  .status-info h3 {
+    font-size: 13px;
+  }
+  
+  .status-info .count {
+    font-size: 17px;
+  }
+  
+  .inquiries-content {
+    padding: 15px;
+  }
+  
+  .ant-list-item {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .inquiries-header h2 {
+    font-size: 24px;
+  }
+  
+  .inquiries-header p {
+    font-size: 14px;
+  }
+  
+  .status-summary {
+    gap: 10px;
+  }
+  
+  .status-card-content {
+    flex-direction: row;
+    text-align: left;
+    padding: 8px;
+  }
+  
+  .status-icon {
+    margin-right: 6px;
+    margin-bottom: 0;
+    font-size: 16px;
+  }
+  
+  .status-info h3 {
+    font-size: 11px;
+  }
+  
+  .status-info .count {
+    font-size: 14px;
+  }
+}
+
+/* 애니메이션 효과 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.inquiries-container {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.status-card {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.status-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.status-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.status-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+/* 로딩 상태 스타일 */
+.ant-list-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: #999;
+}
+
+.ant-list-empty-text {
+  font-size: 16px;
+}
+
+/* 버튼 스타일 개선 */
+.ant-btn-link {
+  color: #1890ff;
+  font-weight: 500;
+}
+
+.ant-btn-link:hover {
+  color: #40a9ff;
+  text-decoration: none;
+}
+
+/* 탭 활성 상태 강조 */
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #1890ff;
+  font-weight: 600;
+}
+
+.ant-tabs-ink-bar {
+  background: #1890ff;
+  height: 3px;
+} 

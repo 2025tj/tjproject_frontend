@@ -121,20 +121,22 @@ const Ranking = () => {
                   </div>
                 )} */}
 
-                {/* <div
-                  style={{
-                    background: 'linear-gradient(135deg, #fceabb 0%, #f8b500 100%)',
-                    padding: '14px',
-                    borderRadius: '10px',
-                    marginBottom: '12px',
-                    color: '#222',
-                    fontWeight: 'bold',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
-                  }}
-                >
-                  🥇 <strong>{top1.name?.replace(/[^\p{L}\s]/gu, "")}</strong><br />
-                  <span style={{ color: '#444' }}>{formatAmount(top1.amount)}</span>
-                </div> */}
+                {top1 && (
+                  <div
+                    style={{
+                      background: 'linear-gradient(135deg, #fceabb 0%, #f8b500 100%)',
+                      padding: '14px',
+                      borderRadius: '10px',
+                      marginBottom: '12px',
+                      color: '#222',
+                      fontWeight: 'bold',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
+                    }}
+                  >
+                    🥇 <strong>{top1.name?.replace(/[^\p{L}\s]/gu, "")}</strong><br />
+                    <span style={{ color: '#444' }}>{formatAmount(top1.amount)}</span>
+                  </div>
+                )}
 
                 {/* <div style={{ height: '50px', overflow: 'hidden', position: 'relative' }}> */}
                   {/* <div
@@ -152,33 +154,35 @@ const Ranking = () => {
                     ))}
                   </div>
                 </div> */}
-                <div style={{ height: '50px', overflow: 'hidden', position: 'relative' }}>
-                  <div
-                    style={{
-                      transition: 'transform 0.5s ease-in-out',
-                      transform: `translateY(-${index * 50}px)`
-                    }}
-                  >
-                    {rest.slice(0, 9).map((company, i) => (
-                      <div
-                        key={i}
-                        style={{
-                          height: '50px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '10px',
-                          paddingLeft: '6px',
-                          borderRadius: '8px',
-                          background: i % 2 === 0 ? '#f9f9f9' : '#f1f1f1',
-                          transition: 'background 0.3s'
-                        }}
-                      >
-                        {i + 2}위: <strong>{company.name.replace(/[^\p{L}\s]/gu, "")}</strong>
-                        <span style={{ color: '#888' }}>{formatAmount(company.amount)}</span>
-                      </div>
-                    ))}
+                {rest && rest.length > 0 && (
+                  <div style={{ height: '50px', overflow: 'hidden', position: 'relative' }}>
+                    <div
+                      style={{
+                        transition: 'transform 0.5s ease-in-out',
+                        transform: `translateY(-${index * 50}px)`
+                      }}
+                    >
+                      {rest.slice(0, 9).map((company, i) => (
+                        <div
+                          key={i}
+                          style={{
+                            height: '50px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px',
+                            paddingLeft: '6px',
+                            borderRadius: '8px',
+                            background: i % 2 === 0 ? '#f9f9f9' : '#f1f1f1',
+                            transition: 'background 0.3s'
+                          }}
+                        >
+                          {i + 2}위: <strong>{company.name?.replace(/[^\p{L}\s]/gu, "")}</strong>
+                          <span style={{ color: '#888' }}>{formatAmount(company.amount)}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
               </div>
             );
