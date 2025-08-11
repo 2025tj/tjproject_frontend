@@ -53,12 +53,12 @@ const AppRouter = () => {
 
     // const [loading, setLoading] = useState(false);
     // const [company, setCompany] = useState([]);
-    const [searchTerm, setSearchTerms] = useState("");
-    const [searchType, setSearchType] = useState("")
+    // const [searchTerm, setSearchTerms] = useState("");
+    // const [searchType, setSearchType] = useState("")
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const location = useLocation()
+    // const location = useLocation()
 
 
     // const toLogin = () => {
@@ -79,26 +79,26 @@ const AppRouter = () => {
     //   // dispatch(fetchCompaniesByName(inputValue));
     // };
 
-    const handleSubmit = (e) => {
-        // useCallback((e) => {
-        e.preventDefault();
-        // if (searchTerm.trim()) 
-        //   dispatch(setSearchTerm(searchTerm)); // 가져옴
-        //   // (searchTerm.trim());
-        //   dispatch(fetchCompaniesByName(searchTerm.trim()))   // 검색어 찾기
-        // navigate("/semi")
+    // const handleSubmit = (e) => {
+    //     // useCallback((e) => {
+    //     e.preventDefault();
+    //     // if (searchTerm.trim()) 
+    //     //   dispatch(setSearchTerm(searchTerm)); // 가져옴
+    //     //   // (searchTerm.trim());
+    //     //   dispatch(fetchCompaniesByName(searchTerm.trim()))   // 검색어 찾기
+    //     // navigate("/semi")
 
-        if (!searchTerm.trim()) return;
+    //     if (!searchTerm.trim()) return;
 
-        dispatch(setSearchTerm(searchTerm));
-        if (searchType === "name") {
-        dispatch(fetchCompaniesByName(searchTerm.trim()));
-        } else if (searchType === "type") {
-        // 분야로 검색하는 액션을 따로 만들어서 dispatch
-        dispatch(fetchCompaniesByType(searchTerm.trim()));
-        }
-        navigate("/semi/company")
-    }
+    //     dispatch(setSearchTerm(searchTerm));
+    //     if (searchType === "name") {
+    //     dispatch(fetchCompaniesByName(searchTerm.trim()));
+    //     } else if (searchType === "type") {
+    //     // 분야로 검색하는 액션을 따로 만들어서 dispatch
+    //     dispatch(fetchCompaniesByType(searchTerm.trim()));
+    //     }
+    //     navigate("/semi/company")
+    // }
 
 
     return (
