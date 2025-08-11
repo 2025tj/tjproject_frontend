@@ -1,356 +1,335 @@
-import React, { useState } from 'react';
-import { Card, Button, List, Tag, Modal, Descriptions, Space, Badge, Tabs } from 'antd';
-import { 
-  ClockCircleOutlined, 
-  ExclamationCircleOutlined, 
-  CheckCircleOutlined,
+import React, { useState, useEffect, useMemo } from "react";
+import {
+  Card,
+  Button,
+  Modal,
+  Descriptions,
+  Space,
+  Row,
+  Col,
+  Avatar,
+  Spin,
+  message,
+} from "antd";
+import {
   EyeOutlined,
   UserOutlined,
   CalendarOutlined,
-  MessageOutlined
-} from '@ant-design/icons';
-import './Inquiries.css';
+  MessageOutlined,
+  MailOutlined,
+  ReloadOutlined,
+  SwapOutlined,
+} from "@ant-design/icons";
+import axios from "axios";
+import "./Inquiries.css";
+import { ButtonGroup, Dropdown, ToggleButton } from "react-bootstrap";
 
-const { TabPane } = Tabs;
+const Base_URL = "http://localhost:8000/api";
 
 const Inquiries = () => {
-  // 샘플 데이터 - 실제로는 API에서 가져올 데이터
-  const [inquiries, setInquiries] = useState([
-    {
-      id: 1,
-      title: "회원가입 관련 문의",
-      content: "회원가입 시 이메일 인증이 되지 않습니다. 확인 부탁드립니다.",
-      status: "new",
-      memberName: "김철수",
-      memberEmail: "kim@example.com",
-      createdAt: "2024-01-15 14:30:00",
-      priority: "high"
-    },
-    {
-      id: 2,
-      title: "결제 시스템 오류",
-      content: "결제 시 카드 등록이 안 되는 문제가 있습니다.",
-      status: "in-progress",
-      memberName: "이영희",
-      memberEmail: "lee@example.com",
-      createdAt: "2024-01-14 09:15:00",
-      priority: "medium",
-      assignedTo: "관리자1"
-    },
-    {
-      id: 3,
-      title: "서비스 이용 문의",
-      content: "데이터 분석 기능 사용법에 대해 문의드립니다.",
-      status: "completed",
-      memberName: "박민수",
-      memberEmail: "park@example.com",
-      createdAt: "2024-01-13 16:45:00",
-      priority: "low",
-      completedAt: "2024-01-14 10:30:00",
-      solution: "사용자 가이드 문서를 제공했습니다."
-    },
-    {
-      id: 4,
-      title: "로그인 오류",
-      content: "비밀번호를 잊어버려서 로그인이 안 됩니다.",
-      status: "new",
-      memberName: "최지영",
-      memberEmail: "choi@example.com",
-      createdAt: "2024-01-15 11:20:00",
-      priority: "high"
-    },
-    {
-      id: 5,
-      title: "데이터 업로드 문제",
-      content: "엑셀 파일 업로드 시 오류가 발생합니다.",
-      status: "in-progress",
-      memberName: "정수민",
-      memberEmail: "jung@example.com",
-      createdAt: "2024-01-12 13:10:00",
-      priority: "medium",
-      assignedTo: "개발팀"
-    }
-  ]);
-
+  const [inquiries, setInquiries] = useState([]);
   const [selectedInquiry, setSelectedInquiry] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [activeTab, setActiveTab] = useState("new");
+  const [loading, setLoading] = useState(true);
 
-  // 상태별 건수 계산
-  const getStatusCount = (status) => {
-    return inquiries.filter(inquiry => inquiry.status === status).length;
-  };
+  const [sort, setSort] = useState("latest");    // 요청사항 정렬
+  const [cardsGrid, setCardsGrid] = useState(2);  //문의 카드 수 단순
 
-  // 상태별 요청사항 필터링
-  const getInquiriesByStatus = (status) => {
-    return inquiries.filter(inquiry => inquiry.status === status);
-  };
+  // 문의사항 데이터 가져오기
+  const fetchInquiries = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${Base_URL}/inquiry`);
+      console.log("조회 데이터", response.data);
+      const inquiriesData = response.data.inquiries;
+      // API 응답 데이터 구조에 맞게 조정 (필요시 수정)
+      const inquiryDatas = inquiriesData.map((item) => ({
+        // id: item.id,
 
-  // 우선순위 색상
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case 'high': return 'red';
-      case 'medium': return 'orange';
-      case 'low': return 'green';
-      default: return 'blue';
+        memberName: item.user_name,
+        title: item.inquiry_title,
+        content: item.inquiry_content,
+        memberEmail: item.member_email,
+        createdAt: item.created_at,
+      }));
+
+      setInquiries(inquiryDatas);
+      message.success("문의사항을 성공적으로 불러왔습니다.");
+    } catch (error) {
+      console.error("문의사항 조회 오류:", error);
+      message.error("문의사항을 불러오는데 실패했습니다.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  // 상태별 아이콘과 색상
-  const getStatusConfig = (status) => {
-    switch (status) {
-      case 'new':
-        return { icon: <ExclamationCircleOutlined />, color: 'red', text: '새로운 건' };
-      case 'in-progress':
-        return { icon: <ClockCircleOutlined />, color: 'orange', text: '진행중인 건' };
-      case 'completed':
-        return { icon: <CheckCircleOutlined />, color: 'green', text: '완료된 건' };
-      default:
-        return { icon: <MessageOutlined />, color: 'blue', text: '기타' };
+  // 특정 문의사항 상세 정보 가져오기 (필요시)   방식별?   --모달로 조정될듯
+  const fetchInquiryDetail = async (type) => {
+    try {
+      const response = await axios.get(`${Base_URL}/inquiries/${type}/`);
+      return response.data;
+    } catch (error) {
+      console.error("문의사항 상세 조회 오류:", error);
+      message.error("문의사항 상세 정보를 불러오는데 실패했습니다.");
+      return null;
     }
   };
+
+  // 컴포넌트 마운트 시 데이터 로드
+  useEffect(() => {
+    fetchInquiries();
+  }, []);
 
   // 요청사항 상세보기
-  const showInquiryDetail = (inquiry) => {
+  const showInquiryDetail = async (inquiry) => {
     setSelectedInquiry(inquiry);
     setIsModalVisible(true);
   };
 
-  // 상태 변경
-  const updateInquiryStatus = (inquiryId, newStatus) => {
-    setInquiries(prev => 
-      prev.map(inquiry => 
-        inquiry.id === inquiryId 
-          ? { ...inquiry, status: newStatus }
-          : inquiry
-      )
+  // 새로고침 기능
+  const handleRefresh = () => {
+    fetchInquiries();
+  };
+  //순서 정렬 state  최신순, 오래된순 정렬위한 시간 비교
+  const sortedInquiries = useMemo(() => {
+    return [...inquiries].sort((a, b) => {
+      const afterT = new Date(a.createdAt).getTime();
+      const beforeT = new Date(b.createdAt).getTime();
+      return sort === "latest" ? beforeT - afterT : afterT - beforeT;
+    });
+  }, [sort, inquiries]);
+  // 날짜 형식 변환 함수
+  // const formatDate = (dateString) => {
+  //   try {
+  //     const date = new Date(dateString);
+  //     return date.toLocaleDateString("ko-KR", {
+  //       // timeZone: "Asia/Seoul",
+  //       year: "numeric",
+  //       month: "2-digit",
+  //       day: "2-digit",
+  //       hour: "2-digit",
+  //       minute: "2-digit",
+  //     }).formatDate(date);
+  //   } catch (error) {
+  //     return dateString;
+  //   }
+  // };
+
+  const GridSpan = () => {
+    switch (cardsGrid) {
+      case 2:
+        return 12;
+      case 3:
+        return 8;
+      case 4:
+        return 6;
+      default:
+        return 12;
+    }
+  };
+  // 문의 카드 렌더링
+  const renderInquiryCard = (inquiry) => {
+    // const colSpan = cardsGrid === 2 ? 12 : cardsGrid === 3 ? 8 : cardsGrid === 4 ? 6 : 12;
+
+    return (
+      <Col xs={24} sm={12} md={8} lg={GridSpan()} key={inquiry.id}>
+        <Card
+          hoverable
+          className="inquiry-card"
+          actions={[
+            <Button
+              type="text"
+              icon={<EyeOutlined />}
+              onClick={() => showInquiryDetail(inquiry)}
+            >
+              상세보기
+            </Button>,
+          ]}
+        >
+          <div className="inquiry-card-header">
+            {/* 회원 요청 카드 하나  */}
+            <Avatar
+              size={40}
+              icon={<UserOutlined />}
+              style={{ backgroundColor: "#1890ff" }}
+            />
+            <div className="inquiry-info">
+              <h4 className="inquiry-title">{inquiry.title}</h4>
+              <p className="inquiry-member">{inquiry.memberName}</p>
+            </div>
+          </div>
+
+          <div className="inquiry-content">
+            <p>
+              {inquiry.content && inquiry.content.length > 80
+                ? `${inquiry.content.substring(0, 80)}...`
+                : inquiry.content}
+            </p>
+          </div>
+
+          <div className="inquiry-meta">
+            <Space direction="vertical" size="small">
+              <div className="inquiry-email">
+                <MailOutlined /> {inquiry.memberEmail}
+              </div>
+              <div className="inquiry-date">
+                {/* 분까지 시간조정 보이기 */}
+                <CalendarOutlined />{" "}
+                {inquiry.createdAt.slice(0, 16).replace("T", " ")}
+              </div>
+            </Space>
+          </div>
+        </Card>
+      </Col>
     );
   };
 
-  // 요청사항 렌더링
-  const renderInquiryItem = (inquiry) => {
-    const statusConfig = getStatusConfig(inquiry.status);
-    
+  if (loading) {
     return (
-      <List.Item
-        key={inquiry.id}
-        actions={[
-          <Button 
-            type="link" 
-            icon={<EyeOutlined />}
-            onClick={() => showInquiryDetail(inquiry)}
-          >
-            상세보기
-          </Button>
-        ]}
-      >
-        <List.Item.Meta
-          title={
-            <Space>
-              <span>{inquiry.title}</span>
-              <Tag color={getPriorityColor(inquiry.priority)}>
-                {inquiry.priority === 'high' ? '높음' : 
-                 inquiry.priority === 'medium' ? '보통' : '낮음'}
-              </Tag>
-              <Badge 
-                status={statusConfig.color} 
-                text={statusConfig.text}
-              />
-            </Space>
-          }
-          description={
-            <Space direction="vertical" size="small">
-              <div>
-                <UserOutlined /> {inquiry.memberName} ({inquiry.memberEmail})
-              </div>
-              <div>
-                <CalendarOutlined /> {inquiry.createdAt}
-              </div>
-              <div style={{ color: '#666' }}>
-                {inquiry.content.length > 100 
-                  ? `${inquiry.content.substring(0, 100)}...` 
-                  : inquiry.content}
-              </div>
-            </Space>
-          }
-        />
-      </List.Item>
+      <div className="inquiries-container">
+        <div style={{ textAlign: 'center', padding: '50px' }}>
+          <Spin size="large" />
+          <p style={{ marginTop: '20px' }}>문의사항을 불러오는 중...</p>
+        </div>
+      </div>
     );
-  };
+  }
 
   return (
     <div className="inquiries-container">
       <div className="inquiries-header">
-        <h2>회원 요청사항 관리</h2>
-        <p>총 {inquiries.length}건의 요청사항이 있습니다.</p>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <div>
+            <h2>
+              <MessageOutlined /> 회원 문의 요청
+            </h2>
+            <p>
+              총 <strong>{inquiries.length}</strong>건의 문의요청이 있습니다.
+            </p>
+          </div>
+          <Button
+            icon={<ReloadOutlined />}
+            onClick={handleRefresh}
+            loading={loading}
+          >
+            새로고침
+          </Button>
+        </div>
+        {/* <ToggleButton
+          type="checkbox"
+          variant={sort === "latest"?"primary": "outline-primary"}
+          checked={sort === "latest"}
+          value="sort"
+          onChange={() =>
+            setSort((prev) => (prev === "latest" ? "oldest" : "latest"))
+          }
+        >
+          {sort === "latest" ? "최신순" : "오래된순"}
+        </ToggleButton> */}
+        <Button
+          type={sort === "latest"?"primary": "default"}
+          // ant hover 색상변경대매 추가함
+          style={sort === "latest" ? { backgroundColor: "#1677ff", borderColor: "#1677ff" } : {}}
+          // icon={<SwapOutlined/>}
+          onClick={() =>
+            setSort((prev) => (prev === "latest" ? "oldest" : "latest"))
+          }
+        >
+          {sort === "latest" ? "최신순" : "오래된순"}
+                </Button>
       </div>
 
-      {/* 상태별 요약 카드 */}
-      <div className="status-summary">
-        <Card 
-          className="status-card new"
-          onClick={() => setActiveTab("new")}
-        >
-          <div className="status-card-content">
-            <ExclamationCircleOutlined className="status-icon" />
-            <div className="status-info">
-              <h3>새로운 건</h3>
-              <span className="count">{getStatusCount("new")}건</span>
-            </div>
-          </div>
-        </Card>
+      <Space style={{ marginTop: "12px" }}>
+        {/* 카드 수 토글 */}
 
-        <Card 
-          className="status-card in-progress"
-          onClick={() => setActiveTab("in-progress")}
-        >
-          <div className="status-card-content">
-            <ClockCircleOutlined className="status-icon" />
-            <div className="status-info">
-              <h3>진행중인 건</h3>
-              <span className="count">{getStatusCount("in-progress")}건</span>
-            </div>
-          </div>
-        </Card>
+        <Dropdown as={ButtonGroup}>
+          <Dropdown.Toggle variant="secondary" id="dropdown-card-count">
+            문의사항 수 {cardsGrid}개씩
+          </Dropdown.Toggle>
 
-        <Card 
-          className="status-card completed"
-          onClick={() => setActiveTab("completed")}
-        >
-          <div className="status-card-content">
-            <CheckCircleOutlined className="status-icon" />
-            <div className="status-info">
-              <h3>완료된 건</h3>
-              <span className="count">{getStatusCount("completed")}건</span>
-            </div>
-          </div>
-        </Card>
-      </div>
+          <Dropdown.Menu>
+            <Dropdown.Item onClick={() => setCardsGrid(2)}>
+              2개씩 보기
+            </Dropdown.Item>
+            <Dropdown.Item onClick={() => setCardsGrid(3)}>
+              3개씩 보기
+            </Dropdown.Item>
+            <Dropdown.Item onClick={() => setCardsGrid(4)}>
+              4개씩 보기
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+      </Space>
 
-      {/* 요청사항 목록 */}
-      <div className="inquiries-content">
-        <Tabs 
-          activeKey={activeTab} 
-          onChange={setActiveTab}
-          className="inquiries-tabs"
-        >
-          <TabPane 
-            tab={
-              <span>
-                <ExclamationCircleOutlined />
-                새로운 건 ({getStatusCount("new")})
-              </span>
-            } 
-            key="new"
-          >
-            <List
-              itemLayout="vertical"
-              dataSource={getInquiriesByStatus("new")}
-              renderItem={renderInquiryItem}
-              locale={{ emptyText: "새로운 요청사항이 없습니다." }}
+      {/* 문의요청 카드 목록 */}
+      <div className="inquiries-grid">
+        {inquiries.length > 0 ? (
+          <Row gutter={[16, 16]}>
+            {sortedInquiries.map((inquiry) => renderInquiryCard(inquiry))}
+          </Row>
+        ) : (
+          <div style={{ textAlign: "center", padding: "50px", color: "#999" }}>
+            <MessageOutlined
+              style={{ fontSize: "48px", marginBottom: "16px" }}
             />
-          </TabPane>
-
-          <TabPane 
-            tab={
-              <span>
-                <ClockCircleOutlined />
-                진행중인 건 ({getStatusCount("in-progress")})
-              </span>
-            } 
-            key="in-progress"
-          >
-            <List
-              itemLayout="vertical"
-              dataSource={getInquiriesByStatus("in-progress")}
-              renderItem={renderInquiryItem}
-              locale={{ emptyText: "진행중인 요청사항이 없습니다." }}
-            />
-          </TabPane>
-
-          <TabPane 
-            tab={
-              <span>
-                <CheckCircleOutlined />
-                완료된 건 ({getStatusCount("completed")})
-              </span>
-            } 
-            key="completed"
-          >
-            <List
-              itemLayout="vertical"
-              dataSource={getInquiriesByStatus("completed")}
-              renderItem={renderInquiryItem}
-              locale={{ emptyText: "완료된 요청사항이 없습니다." }}
-            />
-          </TabPane>
-        </Tabs>
+            <p>등록된 문의사항이 없습니다.</p>
+          </div>
+        )}
+        <br />
       </div>
 
       {/* 상세보기 모달 */}
       <Modal
-        title="요청사항 상세보기"
+        title={
+          <Space>
+            <MessageOutlined />
+            문의요청 상세보기
+          </Space>
+        }
         open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={[
           <Button key="close" onClick={() => setIsModalVisible(false)}>
             닫기
           </Button>,
-          selectedInquiry?.status === "new" && (
-            <Button 
-              key="start" 
-              type="primary"
-              onClick={() => {
-                updateInquiryStatus(selectedInquiry.id, "in-progress");
-                setIsModalVisible(false);
-              }}
-            >
-              진행하기
-            </Button>
-          ),
-          selectedInquiry?.status === "in-progress" && (
-            <Button 
-              key="complete" 
-              type="primary"
-              onClick={() => {
-                updateInquiryStatus(selectedInquiry.id, "completed");
-                setIsModalVisible(false);
-              }}
-            >
-              완료하기
-            </Button>
-          )
         ]}
         width={800}
       >
         {selectedInquiry && (
-          <Descriptions bordered column={1}>
-            <Descriptions.Item label="제목">{selectedInquiry.title}</Descriptions.Item>
-            <Descriptions.Item label="내용">{selectedInquiry.content}</Descriptions.Item>
-            <Descriptions.Item label="요청자">{selectedInquiry.memberName}</Descriptions.Item>
-            <Descriptions.Item label="이메일">{selectedInquiry.memberEmail}</Descriptions.Item>
-            <Descriptions.Item label="요청일시">{selectedInquiry.createdAt}</Descriptions.Item>
-            <Descriptions.Item label="우선순위">
-              <Tag color={getPriorityColor(selectedInquiry.priority)}>
-                {selectedInquiry.priority === 'high' ? '높음' : 
-                 selectedInquiry.priority === 'medium' ? '보통' : '낮음'}
-              </Tag>
+          <Descriptions bordered column={1} size="middle">
+            <Descriptions.Item label="제목" labelStyle={{ width: "120px" }}>
+              {selectedInquiry.title}
             </Descriptions.Item>
-            <Descriptions.Item label="상태">
-              <Badge 
-                status={getStatusConfig(selectedInquiry.status).color} 
-                text={getStatusConfig(selectedInquiry.status).text}
-              />
+            <Descriptions.Item label="문의 내용">
+              <div style={{ whiteSpace: "pre-wrap", lineHeight: "1.6" }}>
+                {selectedInquiry.content}
+              </div>
             </Descriptions.Item>
-            {selectedInquiry.assignedTo && (
-              <Descriptions.Item label="담당자">{selectedInquiry.assignedTo}</Descriptions.Item>
-            )}
-            {selectedInquiry.completedAt && (
-              <Descriptions.Item label="완료일시">{selectedInquiry.completedAt}</Descriptions.Item>
-            )}
-            {selectedInquiry.solution && (
-              <Descriptions.Item label="해결방안">{selectedInquiry.solution}</Descriptions.Item>
-            )}
+            <Descriptions.Item label="요청자">
+              <Space>
+                <UserOutlined />
+                {selectedInquiry.memberName}
+              </Space>
+            </Descriptions.Item>
+            <Descriptions.Item label="이메일">
+              <Space>
+                <MailOutlined />
+                {selectedInquiry.memberEmail}
+              </Space>
+            </Descriptions.Item>
+            <Descriptions.Item label="요청일시">
+              <Space>
+                <CalendarOutlined />
+                {/* {formatDate(selectedInquiry.createdAt)} */}
+                {selectedInquiry.createdAt.slice(0, 16).replace("T", " ")}
+              </Space>
+            </Descriptions.Item>
           </Descriptions>
         )}
       </Modal>

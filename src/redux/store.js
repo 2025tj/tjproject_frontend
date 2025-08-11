@@ -3,6 +3,7 @@ import company from './reducerSlices/companySlice'
 import association from './reducerSlices/associationSlice'
 import news from './reducerSlices/newsSlice'
 import companySearch from './reducerSlices/companySearchSlice'
+import chatbot from './reducerSlices/chatbotSlice'
 import auth from '@features/auth/store/authSlice'
 import user from '@features/user/store/userSlice'
 import subscription from '@features/subscription/store/subscriptionSlice'
@@ -15,7 +16,8 @@ const store = configureStore({
         news,
         auth,
         user,
-        subscription
+        subscription,
+        chatbot  // 검색용
         // info
     }
 });

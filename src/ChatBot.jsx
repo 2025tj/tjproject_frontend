@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setSearchTerm } from "./redux/reducerSlices/companySearchSlice";
 import { fetchCompaniesByName, fetchCompaniesByType } from "./redux/reducerSlices/companySearchSlice";
 import { Link, useNavigate } from "react-router-dom";
+import { fetchCompaniesForChatbot } from "./redux/reducerSlices/chatbotSlice";
 
 const categories = [
   { key: "intro", label: "서비스 소개" },
@@ -17,23 +18,22 @@ const categories = [
 const Chatbot = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const Base_URL = "http://localhost:8000/api/chatbot"
   const { list, status, keyword } = useSelector((search) => search.companySearch) // 검색결과, 상태, 검색어
+  const { companies, searchStatus ,searchTerm} = useSelector((state) => state.chatbot)
 
   const [open, setOpen] = useState(false);   //창 여닫음
   const [selectedCategory, setSelectedCategory] = useState(null);  // 문의사항 선택
   const [input, setInput] = useState("");
   const [confirmModal, setConfirmModal] = useState(false); // 커스텀 모달 상태( 종료 알림창)
   const [showServiceForm, setShowServiceForm] = useState(false); // 서비스 문의 양식 표시
-  const [newsKey, setNewsKey] = useState("")
   // 서비스 문의 양식 내용
   const [serviceFormData, setServiceFormData] = useState({
-
-    purpose: "",
-    // file: null,
-    consultType: "",
-    // agree: false
+    name: "", //작성자
+    title: "",
+    purpose: "",  //요청 방식
+    consultType: "",  // 문의 내용
   });
-  const Base_URL = "http://localhost:8000"
 
   //챗봇 반응/  대화창에 보여질  대화 문구 state
   const [messages, setMessages] = useState([
@@ -63,8 +63,9 @@ const Chatbot = () => {
     setSelectedCategory(null);
     setInput("");
     setShowServiceForm(false);  //서비스 문의 창
-    setServiceFormData({      // 서비스 창 내용 초기화
-
+    setServiceFormData({      // 서비스 창 내용 초기화.
+      name: "",
+      title:"",
       consultType: "", // 형식
       purpose: "",   //문의 내용
       // agree: false
@@ -98,6 +99,8 @@ const Chatbot = () => {
       setShowServiceForm(false);
       setSelectedCategory(null);
       setServiceFormData({
+        name: "",
+        title: "",
         purpose: "",
         consultType: "",
       });
@@ -135,6 +138,8 @@ const Chatbot = () => {
     setShowServiceForm(false);
     setSelectedCategory(null);
     setServiceFormData({
+      name: "",
+      title: "",
       purpose: "",
       consultType: "",
     });
@@ -143,31 +148,12 @@ const Chatbot = () => {
       { from: "bot", text: "문의 양식이 취소되었습니다. 다른 도움이 필요하신가요?" }
     ]);
   };
-
-  
   //
 
-
-  // 검색겨결과 뿌려주기
-  // useEffect(() => {
-  //   if (status === "succeeded" && selectedCategory?.key === "company") {
-  //     const searchList = list.slice(0, 5);
-  //     const resultMsg = searchList.map((company, i) => `${i + 1}. ${company.name}`).join("\n");
-
-
-  //     // 메시지를 배열로 저장 (후 처리에서 렌더링 제어)
-
-  //     setMessages((prev) => [
-  //       ...prev,
-  //       { from: "bot", text: `🔍 검색 결과입니다:\n${resultMsg}` }
-  //     ]);
-  //   }
-  // }, [status]);
 // 뉴스 데이터 찾기
 const SearchNews = async (company_name) => {
   try {
-    // const response = await axios.get(`${Base_URL}/api/chatbot/search/news?company_name=${newsKey}`, {
-    const response = await axios.get(`${Base_URL}/api/chatbot/search/news?company_name=${company_name}`, {
+    const response = await axios.get(`${Base_URL}/search/news?company_name=${company_name}`, {
       headers: { 'Content-Type': 'application/json' }
     })
 
@@ -176,13 +162,13 @@ const SearchNews = async (company_name) => {
     if (response.status === 200) {
       const Response = response.data;
       console.log('뉴스 데이터:', Response); // 데이터 구조 확인용
-
-      if (Response.news_list && Array.isArray(Response.news_list) && Response.news_list.length > 0) {
+      //articles {}안에  뉴스데이터 목록 있음
+      if (Response.articles && Array.isArray(Response.articles) && Response.articles.length > 0) {
         // 최신 뉴스 2개만 가져오기
-        const latestNews = Response.news_list.slice(0, 2).map((news, idx) => `${idx + 1}. ${news.title || '제목 없음'}\n`);
+        const latestNews = Response.articles.slice(0, 3).map((news, idx) => `${idx + 1}. ${news.title || '제목 없음'}\n`);
 
         setMessages(prev => [
-          ...prev, { from: "bot", text: `📰 ${company_name}의 최신 뉴스 2개입니다:\n\n${latestNews.join('')}` }
+          ...prev, { from: "bot", text: `📰 ${company_name}의 최신 뉴스 3개입니다:\n\n${latestNews.join('')}` }
         ])
       } else {
         setMessages((prev) => [
@@ -203,8 +189,8 @@ const SearchNews = async (company_name) => {
 };
 
   useEffect(() => {
-    if (status === "succeeded" && selectedCategory?.key === "company") {
-      const searchList = list.slice(0, 5); // 상위 5개
+    if (searchStatus === "succeeded" && selectedCategory?.key === "company") {
+      const searchList = companies.slice(0, 5); // 상위 5개
 
       const resultMsg = searchList.map((company, i) => ({
         id: company.id,
@@ -221,33 +207,61 @@ const SearchNews = async (company_name) => {
         },
       ]);
     }
-  }, [status]);
+  }, [searchStatus]);
 
-  // useEffect(() => {
-  //   if (selectedCategory?.key === "news" && newsKey) {
-  //     SearchNews(newsKey);
-  //   }
-  // }, [newsKey, selectedCategory]);
   
 const handleSend = () => {
   if (!input.trim()) return;
+  // 입력 방지 (중복 클릭/엔터 방지)
+  const currentInput = input.trim();
+  setInput("");
   setMessages((prev) => [
     ...prev,
-    { from: "user", text: input } // 사용자가 입력한  문자로  상태 변경
+    { from: "user", text: currentInput } // 사용자가 입력한  문자로  상태 변경
   ]);
 
   if (selectedCategory?.key === "company") {
-    dispatch(setSearchTerm(input.trim()));
-    dispatch(fetchCompaniesByName(input.trim()));
-    setMessages((prev) => [...prev, { from: "bot", text: `"${input}" 관련 기업 정보를 불러오고 있어요.` }]);
+    // dispatch(setSearchTerm(input.trim()));
+    // dispatch(fetchCompaniesByName(input.trim()));
+    // setMessages((prev) => [...prev, { from: "bot", text: `"${input}" 관련 기업 정보를 불러오고 있어요.` }]);
+    dispatch(fetchCompaniesForChatbot(currentInput))
+    setMessages((prev) => [...prev, { 
+      from: "bot", 
+      text: `"${currentInput}" 관련 기업 정보를 불러오고 있어요.` 
+    }])
+    // try {
+    //   // Redux 대신 직접 API 호출
+    //   const result = await SearchCompbychat(currentInput);
+    //   const searchList = result.companies.slice(0, 5);
+    //   const resultMsg = searchList.map((company, i) => ({
+    //     id: company.id,
+    //     name: company.name,
+    //     display: `${i + 1}. ${company.name}`,
+    //   }));
+
+    //   setMessages((prev) => [
+    //     ...prev,
+    //     {
+    //       from: "bot",
+    //       type: "companyList",
+    //       data: resultMsg,
+    //     },
+    //   ]);
+    // } catch (error) {
+    //   setMessages((prev) => [
+    //     ...prev,
+    //     { from: "bot", text: "기업 검색 중 오류가 발생했습니다." }
+    //   ]);
+    // }
   }
+  //뉴스찾기 입력시
   else if (selectedCategory?.key === "news") {
     SearchNews(input.trim())  //  input값 함수에 전달
-
   }
 
   setInput("");  //입력창 초기화
 };
+
   // 질문 카테고리별 선택 후 실행
   const handleCategory = (cat) => {
     setSelectedCategory(cat);
@@ -277,9 +291,8 @@ const handleSend = () => {
         ...prev,
         { from: "bot", text: "검색할 기업 정보를 입력해주세요" }
       ]);
-      handleSend()
+      // handleSend()
 
-      // handleCompsearch()
     }
     else if (cat.key === "news") {
       setMessages((prev) => [
@@ -307,7 +320,11 @@ const handleSend = () => {
     // POST 요청으로 서버에 데이터 전송
     console.log("문의 폼:", serviceFormData)
     try {
-      const response = await axios.post(`${Base_URL}/api/chatbot/inquiry`, {
+      const response = await axios.post(`${Base_URL}/inquiry`, {
+
+        //title 추가
+        user_name: serviceFormData.name,
+        inquiry_title: serviceFormData.title,
         inquiry_type: serviceFormData.consultType,
         inquiry_content: serviceFormData.purpose
       }, {
@@ -324,14 +341,15 @@ const handleSend = () => {
         setSelectedCategory(null);
         // 폼 초기화
         setServiceFormData({
-
+          name: "",
+          title: "",
           purpose: "",
           consultType: "",
 
         });
       }
     } catch (error) {
-      console.error('서비스 문의 제출 오류:', error);
+      // console.error('서비스 문의 제출 오류:', error);
       setMessages((prev) => [
         ...prev,
         { from: "bot", text: "죄송합니다. 서비스 문의 접수 중 오류가 발생했습니다. 다시 시도해 주세요." }
@@ -341,6 +359,7 @@ const handleSend = () => {
 
   return (
     <>
+    {/* chatbot 버튼 */}
       <button
         className="chatbot-fab"
         onClick={() => setOpen((prev) => !prev)}
@@ -397,7 +416,6 @@ const handleSend = () => {
                         <div
                           key={company.id}
                           className="chatbot-result-item"
-                          // onClick={() => navigate(`/semi/company`)}
                           onClick={() => navigate(`/semi/company/${company.id}`)}
                           style={{ cursor: "pointer", padding: "4px 0", color: "#1f2937" }}>
                           {/* <Link to={`semi/company/${company.id}`}></Link> */}
@@ -413,10 +431,15 @@ const handleSend = () => {
             {showServiceForm && (
               <div className="chatbot-service-form">
                 <form onSubmit={handleServiceFormSubmit}>
-                  <div className="form-group">
+                  {/* <div className="form-group">
 
-                  </div>
+                  </div> */}
+                  <input type="text" placeholder="작성자이름"
+                   value={serviceFormData.name}
+                   onChange={(e) => handleServiceFormChange('name', e.target.value)}
+                    required />
                   {/* // 상담 방식 선택 */}
+
                   <select
                     value={serviceFormData.consultType}
                     onChange={(e) => handleServiceFormChange('consultType', e.target.value)}
@@ -428,6 +451,11 @@ const handleSend = () => {
                     <option value="improve">기능 개선</option>
                     <option value="etc">기타문의</option>
                   </select>
+                  <input  placeholder="제목"
+                    value={serviceFormData.title} 
+                    onChange={(e) => handleServiceFormChange('title', e.target.value)}
+                    required
+                    />
                   {/* 문의 사항 */}
                   <textarea
                     placeholder="후속 대책 요청 목적을 적어주세요 (예: 사내 갈등 해소 등)"
@@ -465,13 +493,25 @@ const handleSend = () => {
 
           {selectedCategory && !showServiceForm && (
             <div className="chatbot-input-area">
+            {/* <form onSubmit={(e)=>{
+              e.preventDefault()
+              handleSend()
+            }}> */}
+
               <input
                 type="text"
                 placeholder="메시지를 입력하세요..."
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyDown={e => e.key === "Enter" && handleSend()}
-              />
+                onKeyDown={e => e.key === "Enter"&& handleSend()}
+                // onKeyDown={(e)=>{
+                //   if (e.key=== "Enter"){
+                //     e.preventDefault()
+                //     handleSend()
+                //   }
+                // }}
+                />
+                {/* </form> */}
               <button onClick={handleSend}>전송</button>
             </div>
           )}

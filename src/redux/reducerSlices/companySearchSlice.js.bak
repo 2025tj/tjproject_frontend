@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "/node_modules/.vite/deps/@reduxjs
 import axios from "/node_modules/.vite/deps/axios.js?v=27e8c257";
 
 const API_URL = "http://localhost:8000/api/companies/search";
-const chatAPI_URL="http://localhost:8000/api/chatbot/search/company"
+
 // ✅ createAsyncThunk로 비동기 액션 생성
 export const fetchCompaniesByName = createAsyncThunk(
   "company/fetchCompanies",
@@ -22,7 +22,7 @@ export const fetchCompaniesByType = createAsyncThunk(
   "company/fetchByType",
   async (type) => {
     try {
-      const response = await axios.get(`${API_URL}?category=${encodeURIComponent(type)}`);
+      const response = await axios.get(`${API_URL}?type=${encodeURIComponent(type)}`);
       console.log(response.data);
       return response.data;
     } catch (error) {
@@ -32,23 +32,6 @@ export const fetchCompaniesByType = createAsyncThunk(
   }
 );
 
-// 챗봇에서 사용되는 회사 검색
-// export const fetchCompaniesbyChatbot = createAsyncThunk(
-//   "chatbot/fetchbyChatbot",
-//   async (searchMessage) => {
-//     try {
-//       const response = await axios.post(chatAPI_URL, { message: searchMessage });
-//       console.log("Chatbot Response:", response.data);
-//       return response.data;
-//     } catch (error) {
-//       console.error("챗봇 회사 검색 중 오류 발생:", error);
-//       throw error;
-//     }
-//   }
-// );
-
-
-
 const companySearchSlice = createSlice({
   name: 'companySearch',
   initialState: {
@@ -56,8 +39,6 @@ const companySearchSlice = createSlice({
     status: "idle",
     searchTerm: "",
     searchType: "",
-    total: 0,
-    keyword: ""
   },
   reducers: {
     setSearchTerm: (state, action) => {
@@ -74,9 +55,7 @@ const companySearchSlice = createSlice({
       })
       .addCase(fetchCompaniesByName.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.list = action.payload.companies;
-        state.total= action.payload.total_count
-        state.keyword= action.payload.search_keyword
+        state.list = action.payload;
       })
       .addCase(fetchCompaniesByName.rejected, (state) => {
         state.status = "failed";
@@ -87,10 +66,8 @@ const companySearchSlice = createSlice({
       })
       .addCase(fetchCompaniesByType.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.list = action.payload.companies;
-        state.total= action.payload.total_count
-        state.keyword= action.payload.search_keyword   //검색어
-         })
+        state.list = action.payload;
+      })
       .addCase(fetchCompaniesByType.rejected, (state) => {
         state.status = "failed";
       });
