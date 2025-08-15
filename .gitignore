@@ -1,0 +1,119 @@
+# ===============================
+# 📦 기본 로그, 디버그, 리포트
+# ===============================
+logs
+*.log
+*.log.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# ===============================
+# 🏃 런타임 / 프로세스 / 캐시
+# ===============================
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# jscoverage/JSCover
+lib-cov
+
+# 테스트 커버리지
+coverage
+*.lcov
+.nyc_output
+coverage-final.json
+
+# 빌드 캐시 (Grunt, Parcel 등)
+.grunt
+.parcel-cache
+.cache/
+.temp/
+
+# ===============================
+# 📁 의존성 폴더
+# ===============================
+node_modules/
+jspm_packages/
+bower_components/
+web_modules/
+build/Release
+
+# yarn v3 관련 (zip 구조)
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+.yarn-integrity
+
+# ===============================
+# 📦 번들/산출물 폴더 (생성됨 → 무조건 Git 제외)
+# ===============================
+dist/                 # Vite, Vue, Nuxt, etc.
+.next                 # Next.js
+out                   # Next.js static export
+.nuxt                 # Nuxt.js
+.vuepress/dist        # VuePress
+**/.vitepress/dist    # VitePress
+.svelte-kit/          # SvelteKit
+.docusaurus/          # Docusaurus
+
+# ===============================
+# 🛠 설정/캐시 파일들
+# ===============================
+.lock-wscript
+.eslintcache
+.stylelintcache
+.node_repl_history
+*.tsbuildinfo
+*.tgz                # npm pack 결과물
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# ===============================
+# 🔒 환경변수 (.env)
+# ===============================
+.env
+.env.*
+!.env.example         # 예시 파일은 커밋 가능
+
+# ===============================
+# 🧪 테스트 도구 (선택)
+# ===============================
+.vscode-test          # VSCode Extension test
+playwright-report/
+cypress/videos/
+cypress/screenshots/
+
+# ===============================
+# 🧠 IDE/OS 환경 파일 (꼭 제외해야 함)
+# ===============================
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# JetBrains / IntelliJ / WebStorm
+.idea/
+*.iml
+
+# VSCode
+*.code-workspace
+
+# ===============================
+# ☁️ 기타 플랫폼/도구
+# ===============================
+.serverless/
+.fusebox/
+.dynamodb/
+.firebase/
+.tern-port
