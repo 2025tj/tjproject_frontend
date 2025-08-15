@@ -39,6 +39,7 @@ import Semi from "../../Routes/Semi";
 import Register from "../../Routes/Register";
 import CompanyInfo from "../../pages/CompanyInfo";
 import CompanyReview from "../../pages/CompanyReview";
+import MentionPage from "../../pages/MentionPage";
 import Reputation from "../../pages/Reputation";
 import AssociationPage from "../../pages/AssociationPage";
 import CompareKeyword from "../../pages/CompareKeyword";
@@ -180,6 +181,7 @@ const AppRouter = () => {
           <Route path="/semi/*" element={<Semi />}>
             {/* 기본 페이지 리디렉션 */}
             <Route index element={<Navigate to="mention" replace />} />
+            <Route path="mention" element={<MentionPage />} />
             <Route path="company" element={<CompanyInfo />} />
             <Route path="companyreview" element={<CompanyReview />} />
             <Route path="reputation" element={<Reputation />} />

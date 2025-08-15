@@ -28,23 +28,31 @@ const CompanyReview = () => {
 
   const config = {
     percent: 0.3,
-    style: {
-      outlineBorder: 4,
-      outlineDistance: 8,
-      waveLength: 128,
-    },
+    style: { outlineBorder: 4, outlineDistance: 8, waveLength: 128 },
+    color: "#000",
+    fontSize: 102,
     width: 180,
     height: 180,
-    // 가운데 정렬을 위한 설정
     appendPadding: [0, 0, 0, 0],
     autoFit: false,
-    // 차트 컨테이너 스타일
-    containerStyle: {
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-    }
+    containerStyle: { display: 'flex', justifyContent: 'center', alignItems: 'center' },
+  
+    // ✅ 중앙 % 텍스트를 검은색으로
+    statistic: {
+      title: false, // 중앙 위 타이틀 숨김(원하면 유지)
+      content: {
+        style: {
+          color: '#000',   // 일부 버전은 'fill'을 씁니다. 둘 다 넣어도 OK
+          fontSize: 52,
+          fontWeight: 700,
+          lineHeight: '22px',
+          textAlign: 'center',
+        },
+        formatter: (v) => `${(v * 100).toFixed(1)}%`, // 표시 형식 원하는 대로
+      },
+    },
   };
+  
 
   // 분석 데이터가 없을 때의 기본값
   const defaultSentiments = [
@@ -79,9 +87,9 @@ const CompanyReview = () => {
             <Card key={index} className="w-80 text-center">
               <Title level={4}>{label}</Title>
               <div className="flex justify-center">
-                <Liquid {...{ ...config, percent }} />
+                <Liquid {...{ ...config, percent, color }} />
               </div>
-              <div className="mt-2 text-sm text-gray-600">
+              <div className="mt-2 text-sm text-black">
                 {(percent * 100).toFixed(1)}%
               </div>
               <Text className="mt-4 block">분석 데이터 로딩 중...</Text>
@@ -102,18 +110,18 @@ const CompanyReview = () => {
 
   const sentiments = [
     { 
-      label: '긍정', 
+      label: '긍정 리뷰 분석', 
       percent: positiveRatio, 
       color: '#52c41a',
-      keywords: pros.keywords?.slice(0, 3) || [],
-      sampleReviews: pros.sample_reviews?.slice(0, 2) || []
+      keywords: pros.keywords || [],
+      sampleReviews: pros.sample_reviews || []
     },
     { 
-      label: '부정', 
+      label: '부정 리뷰 분석', 
       percent: negativeRatio, 
       color: '#ff4d4f',
-      keywords: cons.keywords?.slice(0, 3) || [],
-      sampleReviews: cons.sample_reviews?.slice(0, 2) || []
+      keywords: cons.keywords || [],
+      sampleReviews: cons.sample_reviews || []
     },
   ];
 
@@ -121,34 +129,34 @@ const CompanyReview = () => {
     <div className="min-h-screen bg-[#FDF8F4] py-10 px-4">
   <div className="max-w-6xl mx-auto">
     {/* 제목 */}
-    <h2 className="text-3xl font-bold text-center text-gray-800 mb-10">
+    <h2 className="text-3xl font-bold text-center text-black mb-10">
       {companyName} 리뷰 분석 결과
     </h2>
 
     {/* 통계 카드 */}
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
       <div className="bg-white shadow-md rounded-2xl p-6 text-center">
-        <h4 className="text-gray-600 mb-2 font-semibold">총 리뷰 수</h4>
-        <p className="text-2xl font-bold text-gray-900">{total_count}개</p>
+        <h4 className="text-black mb-2 font-semibold">총 리뷰 수</h4>
+        <p className="text-2xl font-bold text-gray-900">{total_count/2}개</p>
       </div>
       <div className="bg-white shadow-md rounded-2xl p-6 text-center">
-        <h4 className="text-gray-600 mb-2 font-semibold">평균 만족도</h4>
+        <h4 className="text-black mb-2 font-semibold">평균 만족도</h4>
         <p className="text-2xl font-bold text-gray-900">{avg_score.toFixed(1)}점</p>
       </div>
       <div className="bg-white shadow-md rounded-2xl p-6 text-center">
-        <h4 className="text-gray-600 mb-2 font-semibold">분석 완료</h4>
+        <h4 className="text-black mb-2 font-semibold">분석 완료</h4>
         <p className="text-2xl font-bold text-green-500">✓</p>
       </div>
     </div>
 
-    {/* 감정 분석 카드 */}
+    {/* Liquid 차트 퍼센트 표시 */}
     <div className="flex flex-col md:flex-row justify-center gap-6 mb-10 px-4 md:px-0">
   {sentiments.map(({ label, percent, color, keywords, sampleReviews }, index) => (
     <div key={index} className="bg-white shadow-md rounded-2xl p-6 w-full md:w-[440px]">
       <h4 className="text-lg font-semibold mb-4" style={{ color }}>{label}</h4>
       <div className="flex justify-center mb-4">
         <div className="w-36 h-36 flex justify-center items-center">
-          <Liquid {...{ ...config, percent }} />
+          <Liquid {...{ ...config, percent, color }} />
         </div>
       </div>
 
@@ -181,33 +189,7 @@ const CompanyReview = () => {
       ))}
     </div>
 
-    {/* 상세 분석 */}
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div className="bg-white shadow-md rounded-2xl p-6">
-        <h3 className="text-lg font-bold text-green-700 mb-4">긍정적 리뷰 분석</h3>
-        <p className="mb-2"><span className="font-semibold">평균 점수:</span> {pros.avg_score?.toFixed(1) || 0}점</p>
-        <p className="font-semibold mb-1">주요 키워드:</p>
-        <div className="flex flex-wrap gap-2">
-          {pros.keywords?.map((kw, i) => (
-            <span key={i} className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
-              {kw.keyword} ({kw.frequency})
-            </span>
-          ))}
-        </div>
-      </div>
-      <div className="bg-white shadow-md rounded-2xl p-6">
-        <h3 className="text-lg font-bold text-red-700 mb-4">부정적 리뷰 분석</h3>
-        <p className="mb-2"><span className="font-semibold">평균 점수:</span> {cons.avg_score?.toFixed(1) || 0}점</p>
-        <p className="font-semibold mb-1">주요 키워드:</p>
-        <div className="flex flex-wrap gap-2">
-          {cons.keywords?.map((kw, i) => (
-            <span key={i} className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs">
-              {kw.keyword} ({kw.frequency})
-            </span>
-          ))}
-        </div>
-      </div>
-    </div>
+    
   </div>
 </div>
 

@@ -1,27 +1,32 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useSearchParams } from 'react-router-dom';
 import AssociationMapCard from '../components/AssociationMapCard';
 import MentionChannelCard from '../components/MentionChannelCard';
 import AssociationTopCard from '../components/AssociationTopCard';
 import { Row, Col } from 'antd';
 import KeywordRankCard from '../components/KeywordRankCard';
+import { setCurrentKeyword, clearResults } from '../redux/reducerSlices/keywordSlice';
 
 const AssociationPage = () => {
-  // 대충 임시 데이터
+  const dispatch = useDispatch();
+  const [searchParams] = useSearchParams();
+  const companyName = searchParams.get("company") || "";
+  
+  // Redux 상태
+  const centerKeyword = useSelector((state) => state.association.centerKeyword);
+  const keywordState = useSelector((state) => state.keyword);
+  
   const cardHeight = 561; // 두 카드의 높이를 동일하게 맞춤
-  const dummyItems = [
-    {
-      icon: 'https://via.placeholder.com/20',
-      title: '샘플 제목 <strong>강조</strong>',
-      text: '본문 내용 일부 <em>이탤릭</em>',
-      url: 'https://example.com',
-    },
-    {
-      icon: 'https://via.placeholder.com/20',
-      title: '다른 기사 제목',
-      text: '다른 기사 내용',
-      url: 'https://example.com/2',
-    },
-  ];
+
+  // 회사명이나 중심 키워드가 변경되면 키워드 분석 초기화
+  useEffect(() => {
+    if (centerKeyword) {
+      dispatch(setCurrentKeyword(centerKeyword));
+      // 새로운 키워드로 변경되면 기존 결과 초기화
+      dispatch(clearResults());
+    }
+  }, [centerKeyword, companyName, dispatch]);
 
   return (
     <div className="min-h-screen bg-[#FBF7F4] p-1">
@@ -37,16 +42,30 @@ const AssociationPage = () => {
         </Col>
         <Col xs={24} md={10}>
           <MentionChannelCard
-            keyword="삼성전자"
-            period="2025-06-09 ~ 2025-06-13"
             totalCount={1000}
             viewCount={500}
-            items={dummyItems}
             height={cardHeight}
           />
         </Col>
         
       </Row>
+      
+      {/* 키워드 분석 상태 표시 (개발용, 필요시 제거) */}
+      {keywordState.error && (
+        <div style={{ 
+          position: 'fixed', 
+          bottom: 20, 
+          right: 20, 
+          background: '#ff4d4f', 
+          color: 'white', 
+          padding: '10px 15px', 
+          borderRadius: '8px',
+          zIndex: 1000,
+          maxWidth: '300px'
+        }}>
+          키워드 분석 오류: {keywordState.error}
+        </div>
+      )}
     </div>
   );
 };

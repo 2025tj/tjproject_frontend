@@ -16,20 +16,20 @@ const links = [
     label: '소셜 분석',
     icon: <FolderOpenOutlined />,
     submenu: [
-      { label: '언급량 분석', url: '/semi/mention', color: 'bg-yellow-400' },
+      // { label: '언급량 분석', url: '/semi/mention', color: 'bg-yellow-400' },
       { label: '연관어 분석', url: '/semi/association', color: 'bg-green-400' },
       { label: '긍/부정 분석', url: '/semi/reputation', color: 'bg-purple-400' },
     ],
   },
-  {
-    label: '비교 분석',
-    icon: <PieChartOutlined />,
-    submenu: [
-      { label: '언급량 비교', url: '/semi/compare/mention', color: 'bg-orange-400' },
-      { label: '연관어 비교', url: '/semi/comparekeyword', color: 'bg-pink-400' },
-      { label: '긍/부정 비교', url: '/semi/compare/reputation', color: 'bg-indigo-400' },
-    ],
-  },
+  // {
+  //   label: '비교 분석',
+  //   icon: <PieChartOutlined />,
+  //   submenu: [
+  //     { label: '언급량 비교', url: '/semi/compare/mention', color: 'bg-orange-400' },
+  //     { label: '연관어 비교', url: '/semi/comparekeyword', color: 'bg-pink-400' },
+  //     { label: '긍/부정 비교', url: '/semi/compare/reputation', color: 'bg-indigo-400' },
+  //   ],
+  // },
 ];
 
 const Sidebar = () => {
@@ -67,8 +67,6 @@ const Sidebar = () => {
           open ? 'max-sm:translate-x-0' : 'max-sm:-translate-x-full'
         }`}
       >
-        <div className="text-xl font-bold">로고</div>
-
         <ul className="grid gap-2 pl-0">
           {links.map(({ label, icon, submenu }) => (
             <li key={label}>
@@ -123,15 +121,7 @@ const Sidebar = () => {
           ))}
         </ul>
 
-        <div className="mt-auto flex flex-col gap-2">
-          <button className="text-sm bg-[#FBF7F4] hover:bg-[#FBF7F4] w-full text-left px-3 py-2 rounded-md">로그아웃</button>
-          <button
-            onClick={() => setOpen(false)}
-            className="text-sm text-gray-400 hover:text-black sm:hidden w-full text-left px-3 py-2"
-          >
-            닫기
-          </button>
-        </div>
+        
       </aside>
 
       {/* 메뉴 열기 버튼 (모바일) */}

@@ -1,185 +1,412 @@
-import React, { useEffect, useState } from "react";
-import { Card, Table, Tag } from "antd";
-import cloud from "d3-cloud";
-import * as d3 from "d3";
-import { motion, LayoutGroup } from "framer-motion";
-import "../CSS/tabButton.css"; // 탭 스타일 재사용
-
-const wordData = [
-  { keyword: "기대", type: "긍정", count: 7346 },
-  { keyword: "강세", type: "긍정", count: 4408 },
-  { keyword: "우려", type: "부정", count: 1338 },
-  { keyword: "긍정적", type: "긍정", count: 1079 },
-  { keyword: "호조", type: "긍정", count: 911 },
-  { keyword: "1위", type: "긍정", count: 823 },
-  { keyword: "급등하다", type: "중립", count: 784 },
-  { keyword: "최고", type: "긍정", count: 763 },
-  { keyword: "급락", type: "부정", count: 741 },
-  { keyword: "선호", type: "긍정", count: 567 },
-  { keyword: "화해", type: "긍정", count: 864 },
-  { keyword: "비판하다", type: "부정", count: 1081 },
-  { keyword: "영향력", type: "중립", count: 1578 },
-];
-
-const typeColor = {
-  긍정: "#5845ea",
-  부정: "#f53933",
-  중립: "#fbc400",
-};
-
-const columns = [
-  {
-    title: "단어",
-    dataIndex: "keyword",
-    key: "keyword",
-  },
-  {
-    title: "긍·부정",
-    dataIndex: "type",
-    key: "type",
-    render: (type) => <Tag color={typeColor[type]}>{type}</Tag>,
-  },
-  {
-    title: "건수",
-    dataIndex: "count",
-    key: "count",
-    align: "right",
-  },
-];
+import React, { useEffect } from "react";
+import { Card, Spin, Alert } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
+import { fetchReputationAnalysis, setCurrentPeriod } from "../redux/reducerSlices/reputationSlice";
 
 const ReputationCard = ({ onCalculateSummary }) => {
-  const [viewMode, setViewMode] = useState("cloud");
-  const svgRef = React.useRef();
+  const dispatch = useDispatch();
+  const [searchParams] = useSearchParams();
+  const companyName = searchParams.get('company') || '';
+  
+  // Redux 상태
+  const { 
+    emotionStats, 
+    dominantEmotion, 
+    totalCount, 
+    status, 
+    error, 
+    currentPeriod,
+    averageConfidence 
+  } = useSelector(state => state.reputation);
 
   const tabs = [
-    { id: "cloud", label: "워드맵" },
-    { id: "table", label: "순위표" },
+    { id: 'date1-7', label: '1일' },
+    { id: 'date1-2', label: '1주' },
+    { id: 'date1-3', label: '1달' },
   ];
 
-  useEffect(() => {
-    const typeTotals = wordData.reduce(
-      (acc, item) => {
-        acc[item.type] += item.count;
-        return acc;
-      },
-      { 긍정: 0, 부정: 0, 중립: 0 }
-    );
-
-    const totalCount = typeTotals.긍정 + typeTotals.부정 + typeTotals.중립;
-    const entries = Object.entries(typeTotals);
-    const [maxType, maxTypeCount] = entries.reduce((a, b) => (a[1] > b[1] ? a : b));
-    const maxPercentage = ((maxTypeCount / totalCount) * 100).toFixed(1);
-    onCalculateSummary?.({ maxType, maxPercentage });
-  }, [onCalculateSummary]);
-
-  const cloudData = wordData.map((item) => ({
-    text: item.keyword,
-    value: item.count,
-    type: item.type,
-  }));
-
-  useEffect(() => {
-    if (viewMode !== "cloud") return;
-    // 워드클라우드 레이아웃 생성
-    const layout = cloud()
-      .size([700, 400])
-      .words(cloudData.map(d => ({ ...d, size: 12 + (d.value / 1000) * 14 })))
-      .padding(5)
-      .rotate(() => 0)
-      .font("Pretendard")
-      .fontSize(d => d.size)
-      .on("end", draw);
-    layout.start();
-    function draw(words) {
-      const width = 700;
-      const height = 600;
-      const svg = d3.select(svgRef.current);
-      svg.selectAll("g").remove();
-
-      svg
-        .attr("width", "100%") 
-        .attr("height", "100%")
-        .attr("viewBox", `${-width / 2} ${-height / 2} ${width} ${height}`) 
-        .attr("preserveAspectRatio", "xMidYMid meet");
-
-      svg
-        .append("g")
-        .selectAll("text")
-        .data(words)
-        .enter()
-        .append("text")
-        .style("font-size", (d) => `${d.size}px`)
-        .style("font-family", "Pretendard")
-        .style("fill", (d) => typeColor[d.type])
-        .attr("text-anchor", "middle")
-        .attr("transform", (d) => `translate(${d.x},${d.y})rotate(${d.rotate})`)
-        .text((d) => d.text)
-        .append("title")
-        .text((d) => `${d.text}: ${d.value.toLocaleString()}건`);
+  // 기간별 최대 기사 수 설정
+  const getMaxArticlesByPeriod = (periodId) => {
+    switch (periodId) {
+      case 'date1-7': // 1일
+        return 50;
+      case 'date1-2': // 1주
+        return 200;
+      case 'date1-3': // 1달
+        return 500;
+      default:
+        return 100;
     }
+  };
 
-  }, [viewMode, cloudData]);
-
-  return (
-    <Card
-      title="긍 · 부정"
-      style={{
-        width: "100%",
-        maxWidth: 750,
-        borderRadius: "20px",
-        body: { padding: 0 }
-      }}
+  // 컴포넌트 마운트 시 데이터 로드
+  useEffect(() => {
+    if (companyName && companyName.trim() !== '') {
+      console.log("🎯 ReputationCard 데이터 로드 시작:", {
+        companyName,
+        currentPeriod,
+        maxArticles: getMaxArticlesByPeriod(currentPeriod),
+        timestamp: new Date().toISOString()
+      });
       
-      extra={
-        <LayoutGroup>
+      dispatch(fetchReputationAnalysis({
+        keyword: companyName,
+        periodLabel: currentPeriod,
+        model: 'vote',
+        maxArticles: getMaxArticlesByPeriod(currentPeriod)
+      }));
+    } else {
+      console.log("⚠️ 회사명이 없어서 데이터 로드를 건너뜁니다:", { companyName });
+    }
+  }, [dispatch, companyName, currentPeriod]);
+
+  // 상위 컴포넌트에 요약 데이터 전달
+  useEffect(() => {
+    if (dominantEmotion.type && dominantEmotion.percentage > 0) {
+      onCalculateSummary?.({ 
+        maxType: dominantEmotion.type, 
+        maxPercentage: dominantEmotion.percentage 
+      });
+    }
+  }, [dominantEmotion, onCalculateSummary]);
+
+  // 탭 변경 핸들러
+  const handleTabChange = (periodId) => {
+    console.log("📅 탭 변경:", { from: currentPeriod, to: periodId, companyName });
+    
+    dispatch(setCurrentPeriod(periodId));
+    
+    // 새로운 기간의 데이터가 없으면 API 호출
+    if (companyName && companyName.trim() !== '') {
+      console.log("🔄 새로운 기간 데이터 요청:", { 
+        periodId, 
+        companyName, 
+        maxArticles: getMaxArticlesByPeriod(periodId) 
+      });
+      dispatch(fetchReputationAnalysis({
+        keyword: companyName,
+        periodLabel: periodId,
+        model: 'vote',
+        maxArticles: getMaxArticlesByPeriod(periodId)
+      }));
+    }
+  };
+
+
+
+  // 감정 타입별 색상
+  const emotionColors = {
+    '긍정': '#52c41a',
+    '부정': '#ff4d4f',
+    '중립': '#faad14'
+  };
+
+  // 로딩 상태
+  if (status === 'loading') {
+    return (
+      <Card
+        title="감정 분석"
+        style={{
+          width: "100%",
+          maxWidth: 750,
+          borderRadius: "20px",
+        }}
+        extra={
           <div className="flex space-x-1 bg-gray-200 p-1 rounded-full">
             {tabs.map((tab) => {
-              const isActive = viewMode === tab.id;
+              const isActive = currentPeriod === tab.id;
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setViewMode(tab.id)}
+                  onClick={() => handleTabChange(tab.id)}
+                  disabled={status === 'loading'}
                   className={`relative rounded-full px-3 py-1.5 text-sm font-medium transition focus-visible:outline-2`}
                   style={{
                     color: isActive ? 'white' : 'black', 
                     WebkitTapHighlightColor: 'transparent',
                     zIndex: 1,
+                    backgroundColor: isActive ? '#582D1D' : 'transparent',
+                    opacity: status === 'loading' ? 0.5 : 1,
                   }}
                 >
-                  {isActive && (
-                    <motion.span
-                      layoutId="bubble"
-                      className="absolute inset-0 z-0 mix-blend-normal"
-                      style={{ 
-                        borderRadius: 9999,
-                        backgroundColor: '#582D1D'
-                      }}
-                      transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-                    />
-                  )}
-                  <span style={{ position: 'relative', zIndex: 2 }}>{tab.label}</span>
+                  <span style={{ position: 'relative', zIndex: 2 }}>
+                    {tab.label}
+                  </span>
                 </button>
               );
             })}
           </div>
-        </LayoutGroup>
-      }
-    >
-      {viewMode === "cloud" ? (
-        <div style={{ width: "100%", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <svg ref={svgRef}></svg>
+        }
+      >
+        <div style={{ 
+          width: "100%", 
+          height: "400px",
+          display: 'flex', 
+          flexDirection: 'column',
+          justifyContent: 'center', 
+          alignItems: 'center',
+          gap: '16px'
+        }}>
+          <Spin size="large" />
+          <span style={{ color: '#666', fontSize: '16px' }}>감정 분석 중...</span>
         </div>
-      ) : (
-        <div style={{ maxHeight: 430, overflowY: "auto" }}>
-          <Table
-            columns={columns}
-            dataSource={wordData}
-            pagination={false}
-            rowKey="keyword"
-            size="small"
+      </Card>
+    );
+  }
+
+  // 에러 상태
+  if (status === 'failed' || error) {
+    return (
+      <Card
+        title="감정 분석"
+        style={{
+          width: "100%",
+          maxWidth: 750,
+          borderRadius: "20px",
+        }}
+        extra={
+          <div className="flex space-x-1 bg-gray-200 p-1 rounded-full">
+            {tabs.map((tab) => {
+              const isActive = currentPeriod === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => handleTabChange(tab.id)}
+                  className={`relative rounded-full px-3 py-1.5 text-sm font-medium transition focus-visible:outline-2`}
+                  style={{
+                    color: isActive ? 'white' : 'black', 
+                    WebkitTapHighlightColor: 'transparent',
+                    zIndex: 1,
+                    backgroundColor: isActive ? '#582D1D' : 'transparent',
+                  }}
+                >
+                  <span style={{ position: 'relative', zIndex: 2 }}>
+                    {tab.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        }
+      >
+        <div style={{ 
+          width: "100%", 
+          height: "400px",
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center',
+        }}>
+          <Alert
+            message="분석 실패"
+            description={error || "감정 분석에 실패했습니다."}
+            type="error"
+            showIcon
           />
         </div>
-      )}
+      </Card>
+    );
+  }
+
+  return (
+    <Card
+      title={`감정 분석 (${companyName || '회사명 없음'})`}
+      style={{
+        width: "100%",
+        maxWidth: 750,
+        borderRadius: "20px",
+      }}
+      extra={
+        <div className="flex space-x-1 bg-gray-200 p-1 rounded-full">
+          {tabs.map((tab) => {
+            const isActive = currentPeriod === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => handleTabChange(tab.id)}
+                className={`relative rounded-full px-3 py-1.5 text-sm font-medium transition focus-visible:outline-2`}
+                style={{
+                  color: isActive ? 'white' : 'black', 
+                  WebkitTapHighlightColor: 'transparent',
+                  zIndex: 1,
+                  backgroundColor: isActive ? '#582D1D' : 'transparent',
+                }}
+              >
+                <span style={{ position: 'relative', zIndex: 2 }}>
+                  {tab.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      }
+    >
+      <div style={{ 
+        width: "100%", 
+        minHeight: "400px",
+        padding: "32px 24px",
+        display: 'flex', 
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '32px'
+      }}>
+        {totalCount === 0 ? (
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '300px',
+            color: '#666',
+            fontSize: '16px'
+          }}>
+            <span>분석할 기사가 없습니다.</span>
+            <span style={{ fontSize: '14px', marginTop: '8px' }}>
+              다른 기간을 선택해보세요.
+            </span>
+          </div>
+        ) : (
+          <>
+            {/* 가장 높은 감정 타입 크게 표시 */}
+            <div style={{
+              textAlign: 'center',
+              marginBottom: '24px'
+            }}>
+              <div style={{
+                fontSize: '48px',
+                fontWeight: 'bold',
+                color: emotionColors[dominantEmotion.type] || '#666',
+                marginBottom: '8px'
+              }}>
+                {dominantEmotion.type}
+              </div>
+              <div style={{
+                fontSize: '18px',
+                color: '#666'
+              }}>
+                {dominantEmotion.percentage}% ({dominantEmotion.count}건)
+              </div>
+              {dominantEmotion.confidence > 0 && (
+                <div style={{
+                  fontSize: '14px',
+                  color: '#999',
+                  marginTop: '4px'
+                }}>
+                  신뢰도: {dominantEmotion.confidence}%
+                </div>
+              )}
+            </div>
+
+            {/* 감정별 기사 개수 */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              gap: '20px',
+              width: '100%',
+              maxWidth: '600px'
+            }}>
+              <div style={{
+                flex: 1,
+                textAlign: 'center',
+                padding: '20px 16px',
+                borderRadius: '12px',
+                backgroundColor: '#f6ffed',
+                border: '1px solid #b7eb8f'
+              }}>
+                <div style={{
+                  fontSize: '28px',
+                  fontWeight: 'bold',
+                  color: emotionColors['긍정'],
+                  marginBottom: '8px'
+                }}>
+                  {emotionStats.positive}
+                </div>
+                <div style={{
+                  fontSize: '15px',
+                  color: '#666',
+                  fontWeight: '500'
+                }}>
+                  긍정 기사
+                </div>
+              </div>
+
+              <div style={{
+                flex: 1,
+                textAlign: 'center',
+                padding: '20px 16px',
+                borderRadius: '12px',
+                backgroundColor: '#fff2e8',
+                border: '1px solid #ffd591'
+              }}>
+                <div style={{
+                  fontSize: '28px',
+                  fontWeight: 'bold',
+                  color: emotionColors['중립'],
+                  marginBottom: '8px'
+                }}>
+                  {emotionStats.neutral}
+                </div>
+                <div style={{
+                  fontSize: '15px',
+                  color: '#666',
+                  fontWeight: '500'
+                }}>
+                  중립 기사
+                </div>
+              </div>
+
+              <div style={{
+                flex: 1,
+                textAlign: 'center',
+                padding: '20px 16px',
+                borderRadius: '12px',
+                backgroundColor: '#fff2f0',
+                border: '1px solid #ffb3b3'
+              }}>
+                <div style={{
+                  fontSize: '28px',
+                  fontWeight: 'bold',
+                  color: emotionColors['부정'],
+                  marginBottom: '8px'
+                }}>
+                  {emotionStats.negative}
+                </div>
+                <div style={{
+                  fontSize: '15px',
+                  color: '#666',
+                  fontWeight: '500'
+                }}>
+                  부정 기사
+                </div>
+              </div>
+            </div>
+
+            {/* 총 기사 수 및 평균 신뢰도 */}
+            <div style={{
+              textAlign: 'center',
+              marginTop: '16px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '4px'
+            }}>
+              <div style={{
+                fontSize: '16px',
+                color: '#666'
+              }}>
+                총 {totalCount}건의 기사 분석
+              </div>
+              {averageConfidence > 0 && (
+                <div style={{
+                  fontSize: '14px',
+                  color: '#999'
+                }}>
+                  평균 신뢰도: {averageConfidence}%
+                </div>
+              )}
+            </div>
+          </>
+        )}
+      </div>
     </Card>
   );
 };
