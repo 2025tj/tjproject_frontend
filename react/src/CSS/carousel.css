@@ -1,0 +1,29 @@
+/* 인디케이터(아래 점) 스타일 */
+.carousel-indicators [data-bs-target] {
+    background-color: #333 !important; /* 더 진한 색상 */
+    width: 16px !important;
+    height: 16px !important;
+    border-radius: 50%;
+    opacity: 1 !important;
+    border: 2px solid #fff;
+    margin: 0 6px;
+  }
+  .carousel-indicators .active {
+    background-color: #007bff !important; /* 활성화된 점은 파란색 */
+    border: 2px solid #007bff;
+  }
+  
+  /* 좌우 화살표 버튼 스타일 */
+  .carousel-control-prev-icon,
+  .carousel-control-next-icon {
+    background-color: rgba(0,0,0,0.7) !important;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    background-size: 60% 60%;
+  }
+  .carousel-control-prev,
+  .carousel-control-next {
+    opacity: 1 !important;
+    filter: none !important;
+  }

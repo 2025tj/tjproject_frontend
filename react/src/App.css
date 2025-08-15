@@ -1,0 +1,238 @@
+/* .container{
+  margin-left: 15%;
+  margin-right: 15%;
+} */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 전체 레이아웃을 좀 더 균형 잡히게 만들기 위해 display: flex 추가 */
+body {
+/*  font-family: Arial, sans-serif;
+  
+display: flex;
+/* min-width: 100vw;
+min-height: 100vh; */
+/* margin-left:  100px;
+margin-right:  100px;  */
+  flex-direction: column;
+  align-items: flex-start;
+}
+main {
+  /* padding-bottom: 50px; */
+  margin-top: 20px;
+  margin-left: 30px;
+}
+/* 내비게이션 바 */
+nav {
+  background-color: rgba(246, 202, 250, 0.904);
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 내비게이션 리스트 */
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 2rem;
+  /* margin-right: 70px; */
+  padding: 0;
+}
+
+/* 내비게이션 링크 스타일 */
+nav li {
+  display: inline;
+}
+
+nav a {
+  color: #0f0f0f;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+nav a:hover {
+  color: #232fdd; /* 부트스트랩 느낌의 민트 색상 */
+}
+
+/* 검색창 크기 */
+ .search-bar-wrapper {
+  margin-top: 40px;
+  max-width: 60%;
+  margin-left: 200px;
+  margin-right: 50px;
+} 
+
+.search-form {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.search-input {
+  flex: 1;
+  width: 350px;
+  padding: 10px 100px 10px 0px;
+  text-align: left;
+  font-size: 18px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  /* outline: none; */
+  transition: border-color 0.3s;
+  /* margin-left: 10%; */
+}
+
+.search-input:focus {
+  border-color: #007bff;
+}
+ button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #a59e9e;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+} 
+
+.buttons {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.buttons button {
+  background-color: white;
+  color: #1a1a1a ;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.buttons button:hover {
+  background-color: #333;
+}
+.search-button{
+  padding: 10px 20px;
+  font-size: 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+/* .search-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.search-button:hover {
+  background-color: #0056b3;
+} */
+/* 배경 이미지 설정 */
+.main-bg{
+  /* width: 1200px; */
+  height: 450px; /* 원하는 높이 */
+  /* background-image: url('https://plus.unsplash.com/premium_vector-1682309287225-c4ab96e5b8d2?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); */
+  /* background-image: url('https://images.pexels.com/photos/20160209/pexels-photo-20160209.jpeg?_gl=1*1oz3exo*_ga*NTEyNzI0ODU5LjE3NTMyNTk5MTE.*_ga_8JE65Q40S6*czE3NTMyNTk5MTEkbzEkZzEkdDE3NTMyNjAwMTckajI0JGwwJGgw'); */
+  background-image: url('https://plus.unsplash.com/premium_vector-1682308497193-45030a6b4822?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+  background-size: 100% 130% ;
+  /* background-size: contain; */
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 0px;
+  /* margin-bottom: 12px; */
+  display: flex;
+  flex-direction: column;
+  margin-top: 0px;
+  align-items: center;
+  justify-content: center;
+  /* padding: 40px 20px  */
+  
+  /* 필요시 텍스트 중앙정렬 등 추가 */
+}
+
+
+
+/* 카테고리 목록 링크 호버 효과 */
+.category-list li a:hover {
+  color: #2d00d1;
+  background-color: #007bff;
+}
+
+/* 화면 슬라이드 */
+.carousel-section {
+  text-align: center;
+  margin: 30px 0;
+}
+
+.carousel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.carousel-item h2 {
+  font-size: 1.8rem;
+}
+
+.carousel-btn {
+  font-size: 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.date-keywords-section {
+  margin: 30px 0;
+  text-align: center;
+}
+
+.calendar p {
+  font-size: 1.2rem;
+  margin: 10px 0;
+}
+
+.keywords p {
+  font-weight: bold;
+  margin: 20px 0 10px;
+}
+
+.keyword-cloud {
+  font-size: 0.9rem;
+  color: #666;
+}

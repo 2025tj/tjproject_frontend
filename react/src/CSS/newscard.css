@@ -1,0 +1,46 @@
+.newscard {
+  width: 30%;
+  height: 100%;
+  border-radius: 20px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column; /* 가로 → 세로 전환 */
+
+  padding: .4em;
+}
+
+.newscard p {
+  width: 100%;               /* 너비를 채우고 */
+  height: 80px;              /* 초기 높이 지정 */
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all .5s;
+  background: #ffffff;
+  border: 1px solid #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.newscard p:hover {
+  height: 200px;             /* hover 시 아래로 확장 */
+}
+
+.newscard p span {
+  padding: .5em;
+  text-align: center;
+  transform: rotate(0deg);    /* 회전 제거 */
+  transition: all .5s;
+  text-transform: uppercase;
+  color: #000000;
+  letter-spacing: .1em;
+}
+
+.newscard p:hover span {
+  font-weight: bold;
+}
+
+h2 {
+    text-align: center;
+}

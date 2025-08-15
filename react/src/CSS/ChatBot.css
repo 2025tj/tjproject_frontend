@@ -1,0 +1,384 @@
+.chatbot-fab {
+  position: fixed;
+  right: 32px;
+  bottom: 32px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4e9af1, #5ecbff);
+  color: #fff;
+  font-size: 1.8rem;
+  border: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  z-index: 1000;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.chatbot-fab:hover {
+  transform: scale(1.05);
+}
+
+.chatbot-popup {
+  position: fixed;
+  right: 32px;
+  bottom: 100px;
+  width: 500px;
+  height: 650px;
+  background: #fdfdfd;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.chatbot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, #4e9af1, #5ecbff ,#5ecbff);
+  color: #510f61;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.chatbot-header span::before {
+  content: "";
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  background-image: url("https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/nnxu6763nacapgr1bdxjc80xrk6m");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+.chatbot-header button{
+  background-color: #fbffca;
+  border-radius: 30%;
+  
+}
+.chatbot-header :hover{
+  background-color: #7efbff;
+  border-radius: 30%;
+}
+.chatbot-body {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  background: #f7f9fb;
+}
+
+.chatbot-msg-bot, .chatbot-msg-user {
+  max-width: 80%;
+  padding: 10px 14px;
+  margin: 8px 0;
+  border-radius: 16px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+.chatbot-msg-bot {
+  background: #e3f2fd;
+  color: #333;
+  align-self: flex-start;
+}
+
+
+
+.chatbot-msg-user {
+  background: #d0e8ff;
+  color: #333;
+  align-self: flex-end;
+}
+
+.chatbot-categories {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  gap: 8px;
+}
+
+.chatbot-category-btn {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.chatbot-category-btn:hover {
+  background-color: #f1f9ff;
+  transform: translateY(-1px);
+}
+
+.chatbot-input-area {
+  display: flex;
+  border-top: 1px solid #ddd;
+  padding: 12px;
+  background: #fff;
+}
+
+.chatbot-input-area input {
+  flex: 1;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  background: #f0f4f8;
+  margin-right: 8px;
+  outline: none;
+}
+
+.chatbot-input-area button {
+  border: none;
+  background: #4e9af1;
+  color: white;
+  border-radius: 12px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+}
+
+.chatbot-input-area button:hover {
+  background: #3a86d6;
+}
+
+/* 커스텀 확인 모달 스타일 */
+.chatbot-confirm-modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1002;
+}
+
+.chatbot-confirm-content {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  max-width: 300px;
+  width: 90%;
+  text-align: center;
+}
+
+.chatbot-confirm-content h3 {
+  margin: 0 0 12px 0;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.chatbot-confirm-content p {
+  margin: 0 0 20px 0;
+  color: #666;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.chatbot-confirm-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.chatbot-confirm-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 80px;
+}
+
+.chatbot-confirm-btn.confirm {
+  background: #4e9af1;
+  color: white;
+}
+
+.chatbot-confirm-btn.confirm:hover {
+  background: #3a86d6;
+}
+
+.chatbot-confirm-btn.cancel {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.chatbot-confirm-btn.cancel:hover {
+  background: #e0e0e0;
+}
+
+/* 서비스 문의 양식 스타일 */
+.chatbot-service-form {
+  margin-top: 16px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+}
+
+.chatbot-service-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chatbot-service-form .form-group {
+  display: flex;
+  gap: 8px;
+}
+
+.chatbot-form-input,
+.chatbot-form-textarea,
+.chatbot-form-select {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  background: white;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.chatbot-form-input:focus,
+.chatbot-form-textarea:focus,
+.chatbot-form-select:focus {
+  border-color: #4e9af1;
+}
+
+.chatbot-form-input {
+  flex: 1;
+}
+
+.chatbot-form-textarea {
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+}
+
+.chatbot-form-select {
+  width: 100%;
+}
+
+.chatbot-form-label {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.chatbot-form-file {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  font-size: 0.85rem;
+}
+
+.chatbot-form-checkbox-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.chatbot-form-checkbox {
+  margin-top: 2px;
+  accent-color: #4e9af1;
+}
+
+.chatbot-form-checkbox-label {
+  font-size: 0.85rem;
+  color: #666;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.chatbot-form-submit{
+  background: #4e9af1 !important;
+  color: rgb(255, 255, 255);
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  margin-top: 8px;
+} 
+
+.chatbot-form-submit:hover{
+  background: #3a86d6;
+}
+
+.chatbot-form-submit:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* 이전으로가기 버튼 스타일 */
+.chatbot-back-button {
+  padding: 8px 16px;
+  border-top: 1px solid #e9ecef;
+  background: #f8f9fa;
+}
+
+.chatbot-back-btn {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.chatbot-back-btn:hover {
+  background: #5a6268;
+}
+
+/* 폼 버튼 컨테이너 스타일 */
+.chatbot-form-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+
+
+.chatbot-form-cancel {
+  flex: 1;
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.chatbot-form-cancel:hover {
+  background: #5a6268;
+}
+

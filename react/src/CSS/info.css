@@ -1,0 +1,69 @@
+.main-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  /* align-items: center; */
+  margin-bottom: 20px;
+}
+
+
+.carousel-section {
+  text-align: center;
+  margin: 30px 0;
+}
+
+.carousel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.carousel-item h2 {
+  font-size: 1.8rem;
+}
+
+.carousel-btn {
+  font-size: 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.date-keywords-section {
+  margin: 30px 0;
+  text-align: center;
+}
+
+.calendar p {
+  font-size: 1.2rem;
+  margin: 10px 0;
+}
+
+.keywords p {
+  font-weight: bold;
+  margin: 20px 0 10px;
+}
+
+.keyword-cloud {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.news-section {
+  margin-top: 50px;
+  padding: 20px;
+  background-color: #f3f4f6;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.news-article p, .contact-info p {
+  margin: 10px 0;
+  color: #333;
+}
