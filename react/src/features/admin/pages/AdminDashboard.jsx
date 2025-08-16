@@ -1,11 +1,7 @@
-import React, { useState } from 'react'
-import "../../../ASide/AdminLoad.css";
-
-import { Link, useLocation } from 'react-router-dom'
+import React from 'react'
+import { Link } from 'react-router-dom'
 
 const AdminDashboard = () => {
-
-    
     return (
         <div style={{ padding: 20}}>
             <h2>관리자 대시보드</h2>

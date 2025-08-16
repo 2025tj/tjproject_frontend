@@ -11,7 +11,7 @@ const Header = () => {
     const handleLogout = async () => {
         try {
             await dispatch(logoutThunk()).unwrap()
-            navigate('/')
+            navigate('/login')
         } catch (err) {
             console.error('로그아웃 요청 실패:', err)
         }

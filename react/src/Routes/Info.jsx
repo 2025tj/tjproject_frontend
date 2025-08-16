@@ -48,7 +48,7 @@ const Info = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-gray-800 mb-4">기업 리스트</h1>
+      <h1>기업 리스트</h1>
 
       {/* 리스트 */}
       <div className="list-container px-4 sm:px-8 md:px-12 lg:px-24 py-6">
@@ -68,15 +68,14 @@ const Info = () => {
       <tbody className="divide-y divide-gray-100">
         {currentItems.map((item, idx) => (
           <tr key={item.id || idx} className="hover:bg-indigo-50 transition duration-200 ease-in-out">
-            <td className="px-4 py-3 text-center text-sm font-bold text-black-700">
+            <td className="px-4 py-3 text-center text-sm text-gray-700">
               {startIdx + idx + 1}
             </td>
             <td className="px-4 py-3 text-center">
               <div className="flex items-center justify-center gap-2">
                 <Link
                   to={`/semi/company?company=${encodeURIComponent(item.name)}`}
-                  // className="text-indigo-600 font-medium hover:underline hover:text-indigo-800 transition duration-150"
-                  className="text-blue-700 font-medium hover:text-gray-900 transition duration-150"
+                  className="text-indigo-600 font-medium hover:underline hover:text-indigo-800 transition duration-150"
                 >
                   {item.name.replace(/[^\p{L}\s]/gu, "")}
                 </Link>

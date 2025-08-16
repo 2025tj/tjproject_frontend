@@ -5,7 +5,6 @@ import { submitReview, fetchReviews, updateReview, deleteReview, likeReview } fr
 import { Card, Row, Col, Divider, Typography, Spin, Alert, Empty, Button, Modal, Input, message } from 'antd';
 import { fetchCompanies, setCompanyName, setCompanyData, clearReviews } from '../redux/reducerSlices/companySlice';
 import { EditOutlined, DeleteOutlined, LikeOutlined, DislikeOutlined, MessageOutlined } from '@ant-design/icons';
-import MentionChannelCard from '../components/MentionChannelCard';
 
 import '../CSS/newscard.css';
 
@@ -26,20 +25,11 @@ const CompanyInfo = () => {
   const [searchParams] = useSearchParams();
   const companyNameFromURL = searchParams.get('company');
   const companyName = useSelector((state) => state.company.companyName);
-  //const newsList = useSelector((state) => state.news.list);
+  const newsList = useSelector((state) => state.news.list);
   const { reviews, totalReviews } = useSelector(state => state.company);
-  const { user } = useSelector(state => state.auth);
   
   // targetCompanyName을 컴포넌트 레벨에서 한 번만 계산
   const targetCompanyName = companyNameFromURL || companyName;
-  
-  // 사용자 닉네임 표시 함수
-  const getUserDisplayName = (userId) => {
-    if (userId === 123) {
-      return user?.nickname || '테스트유저';
-    }
-    return `사용자${userId}`;
-  };
   
   //✅회사 정보 불러오기
   useEffect(() => {
@@ -144,13 +134,6 @@ const CompanyInfo = () => {
     Modal.confirm({
       title: '리뷰 삭제',
       content: '리뷰를 삭제하시겠습니까?',
-      okButtonProps: {
-        style: {
-          borderColor: '#000000',
-          color: '#000000',
-          backgroundColor: 'transparent'
-        }
-      },
       onOk() {
         dispatch(deleteReview({ reviewId })).then((action) => {
           if (action.meta.requestStatus === 'fulfilled') {
@@ -211,7 +194,10 @@ const CompanyInfo = () => {
     setTextareaContent(review.content);
   };
 
-
+  const filteredNews = newsList
+  .filter((item) => item.summary.includes(targetCompanyName))
+  .sort((a, b) => new Date(b.date) - new Date(a.date))
+  .slice(0, 6);
 
 
   const { companies, status, error } = useSelector((state) => state.company);
@@ -266,7 +252,7 @@ const CompanyInfo = () => {
       <div key={review.id} className="bg-slate-50 border border-slate-200 p-3 rounded-lg mb-3" style={{ marginLeft: isReply ? `${Math.min(marginLeft, 40)}px` : '0px' }}>
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-0 mb-2">
           <div className="font-semibold text-slate-800">
-            {getUserDisplayName(review.userId)}
+            {review.userId === 123 ? '테스트유저' : `사용자${review.userId}`}
           </div>
           <div className="flex flex-wrap gap-1 sm:gap-2">
             <Button 
@@ -469,7 +455,7 @@ const CompanyInfo = () => {
               className="bg-slate-100 text-slate-600 h-28 placeholder:text-slate-600 placeholder:opacity-50 border border-slate-200 col-span-6 resize-none outline-none rounded-lg p-2 duration-300 focus:border-slate-600"
               placeholder={
                 editingReview ? "수정할 내용을 입력하세요" :
-                replyToReview ? `${getUserDisplayName(replyToReview.userId)}님에게 답글 작성...` : 
+                replyToReview ? `${replyToReview.userId === 123 ? '테스트유저' : `사용자${replyToReview.userId}`}님에게 답글 작성...` : 
                 "의견을 적어주세요"
               }
             />
@@ -508,8 +494,35 @@ const CompanyInfo = () => {
           </div>
         </div>
         {/* 오른쪽: 뉴스 */}
-        <div style={{ flex: 1, minWidth: '300px', maxWidth: '400px' }}>
-          <MentionChannelCard height={450} />
+        <div className="newscard" style={{ flex: 1, minWidth: '300px', maxWidth: '400px' }}>
+          <h2>NEWS</h2>
+          {filteredNews.length === 0 ? (
+            <p style={{ textAlign: 'center' }}>등록된 뉴스가 없습니다.</p>
+          ) : (
+            filteredNews.map((item, index) => {
+              const lines = item.summary.split('\n');
+              const matchLines = lines.filter((line) => line.includes(targetCompanyName));
+              const mainLine = matchLines[0] || '';
+              const extraLines = matchLines.slice(1, 3);
+              return (
+                <div
+                  key={index}
+                  className="news-card-item"
+                  onClick={() => window.open(item.link, '_blank')}
+                >
+                  <p className="news-title">{item.title}</p>
+                  <p className="news-summary main">{mainLine}</p>
+                  {extraLines.length > 0 && (
+                    <div className="hover-summary">
+                      {extraLines.map((line, i) => (
+                        <p key={i} className="news-summary extra">{line}</p>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
     </div>

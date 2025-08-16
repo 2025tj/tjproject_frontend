@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
 import KeywordRankCard from './KeywordRankCard';
-import { Crown } from 'lucide-react';
+import { ThumbsUp, ThumbsDown } from 'lucide-react';
 
 const categories = [
   '정치', '경제', '사회', '문화', '국제', '지역',
   '스포츠', 'IT_과학', '범죄', '사고', '재해'
 ];
 
-const AssociationTopCard = () => {
-  const relatedKeywords = useSelector((state) => state.association.relatedKeywords);
+const ReputationTopCard = ({ summary }) => {
+  const { maxType, maxPercentage } = summary;
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [selected, setSelected] = useState([]);
   const dropdownRef = useRef(null);
@@ -60,12 +59,6 @@ const AssociationTopCard = () => {
     // 여기에 선택된 카테고리를 적용하는 로직을 추가할 수 있습니다
   };
 
-  const topKeywordObj = relatedKeywords?.reduce(
-    (max, curr) => (curr.value > (max?.value ?? -Infinity) ? curr : max),
-    null
-  );
-  const topKeyword = topKeywordObj?.name || '데이터 없음';
-
   const cardItems = [
     {
       icon: null,
@@ -74,10 +67,10 @@ const AssociationTopCard = () => {
       color: ''
     },
     {
-      icon: <Crown size={28} color="#5845ea" />,
-      title: topKeyword,
-      subtitle: '연관어 Top 1',
-      color: '#5845ea'
+      icon: maxType === '긍정' ? <ThumbsUp size={28} color="#5845ea" /> : <ThumbsDown size={28} color="#ea4545" />,
+      title: `${maxType} ${maxPercentage}%`,
+      subtitle: '가장 높은 비율',
+      color: maxType === '긍정' ? '#5845ea' : '#ea4545'
     }
   ];
 
@@ -93,7 +86,7 @@ const AssociationTopCard = () => {
               <button
                 onClick={() => setDropdownOpen((prev) => !prev)}
                 className="
-                  w-[140px]
+                  w-[110px]
                   bg-[#fbeee0]
                   border-2 border-[#422800]
                   rounded-full
@@ -110,7 +103,7 @@ const AssociationTopCard = () => {
                   select-none
                 "
               >
-                카테고리 선택
+                카테고리
               </button>
               
               {/* 날짜 선택 버튼 추가 */}
@@ -121,7 +114,7 @@ const AssociationTopCard = () => {
                     setCustomDateDropdownOpen((prev) => !prev);
                   }}
                   className="
-                    w-[140px]
+                    w-[110px]
                     bg-[#e0f2fb]
                     border-2 border-[#004280]
                     rounded-full
@@ -138,7 +131,7 @@ const AssociationTopCard = () => {
                     select-none
                   "
                 >
-                  날짜 선택
+                  날짜
                 </button>
                 
                 {customDateDropdownOpen && (
@@ -244,11 +237,16 @@ const AssociationTopCard = () => {
           )}
         </div>
       ))}
-      <div className="flex items-center justify-center rounded-2xl border border-gray-100 bg-white py-4 pl-4 pr-4 dark:border-gray-800 dark:bg-white/[0.03] xl:pr-5">
-        <KeywordRankCard />
+      <div className="relative rounded-2xl border border-gray-100 bg-white dark:border-gray-800 dark:bg-white/[0.03] cursor-pointer">
+        <div className="flex items-center justify-center h-full py-4">
+          <p className="ranktitle">랭킹보기</p>
+        </div>
+        <div className="absolute inset-0 bg-white rounded-2xl opacity-0 hover:opacity-100 transition-opacity duration-300 z-10">
+          <KeywordRankCard />
+        </div>
       </div>
     </div>
   );
 };
 
-export default AssociationTopCard;
+export default ReputationTopCard;
