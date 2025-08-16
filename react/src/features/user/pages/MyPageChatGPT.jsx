@@ -250,3 +250,4 @@ const MyPageChatGPT = () => {
 }
 
 export default MyPageChatGPT
+

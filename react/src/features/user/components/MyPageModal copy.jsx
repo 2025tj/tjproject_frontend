@@ -10,7 +10,6 @@ import { emailService } from '../../email/services/emailService'
 import { useSubscription } from '../../subscription/hooks/useSubscription'
 import { checkSubStatThunk } from '../../subscription/store/subscriptionThunk'
 import WithdrawModal from './WithdrawModal'
-import '../css/MyPageModal.css'
 
 const MyPageModal = ({ open, onClose }) => {
   const user = useSelector((state) => state.user.profile)
@@ -76,22 +75,22 @@ const MyPageModal = ({ open, onClose }) => {
       case 'account':
         return (
           <div className="space-y-6">
-            <div className="border-b border-token-border-light pb-4">
-              <h4 className="text-sm text-token-text-secondary mb-2">이메일</h4>
-              <p className="text-base text-token-text-primary">{user?.email || '없음'}</p>
+            <div>
+              <h4 className="text-sm text-gray-600 mb-1">이메일</h4>
+              <p className="text-base">{user?.email || '없음'}</p>
             </div>
 
             <div>
-              <h4 className="text-sm text-token-text-secondary mb-1">이메일 인증</h4>
+              <h4 className="text-sm text-gray-600 mb-1">이메일 인증</h4>
               {user?.emailVerified ? (
-                <span className="inline-block bg-token-interactive-accent-default text-white text-xs px-2 py-1 rounded-md">인증됨</span>
+                <span className="inline-block bg-blue-600 text-white text-xs px-2 py-1 rounded">인증됨</span>
               ) : (
-                <div className="text-sm text-token-text-error">
+                <div className="text-sm text-red-500">
                   인증되지 않음
                   <button
                     onClick={handleResendVerification}
                     disabled={resendLoading || resendCooldown > 0}
-                    className="ml-2 px-3 py-1 bg-amber-500 text-white rounded-md hover:bg-amber-600 text-xs transition-colors"
+                    className="ml-2 px-3 py-1 bg-yellow-400 text-white rounded hover:bg-yellow-500 text-xs"
                   >
                     {resendCooldown > 0 ? `재발송 (${resendCooldown})` : '인증 메일 재발송'}
                   </button>
@@ -99,31 +98,23 @@ const MyPageModal = ({ open, onClose }) => {
               )}
             </div>
 
-            {/* OAuth2 섹션 */}
-            <div className="pb-6 border-b border-token-border-light">
-              <OAuth2LinkSection onLinkSuccess={handleLinkSuccess}/>
-            </div>
-            {/* 사용자 정보 수정 섹션 */}
-            <div className="pb-6">
-              <UserEditform />
-            </div>
+            <OAuth2LinkSection onLinkSuccess={handleLinkSuccess}/>
+            <UserEditform />
 
-            <div className="pt-6 border-t border-token-border-light">
-              <div className="pt-10 text-right">
-                <button
-                  type='button'
-                  className='text-token-text-error hover:underline'
-                  onClick={() => setWithdrawOpen(true)}
-                >
-                  회원탈퇴 →
-                </button>
-              </div>
-              <WithdrawModal
-                open={withdrawOpen}
-                onClose={()=>setWithdrawOpen(false)}
-                requirePassword={true}
-              />
+            <div className="pt-10 text-right">
+              <button
+                type='button'
+                className='text-red-600 hover:underline'
+                onClick={() => setWithdrawOpen(true)}
+              >
+                회원탈퇴 →
+              </button>
             </div>
+            <WithdrawModal
+              open={withdrawOpen}
+              onClose={()=>setWithdrawOpen(false)}
+              requirePassword={true}
+            />
           </div>
         )
       
@@ -153,14 +144,14 @@ const MyPageModal = ({ open, onClose }) => {
       case 'subscription':
         return (
           <div className="space-y-6">
-            <div className="border-t border-token-border-light pt-6">
-              <h3 className="text-xl font-semibold text-token-text-primary mb-3">구독 정보</h3>
+            <div className="border-t pt-6">
+              <h3 className="text-xl font-semibold mb-3">구독 정보</h3>
               <div className="flex items-center justify-between">
-                <div className="text-token-text-secondary">
+                <div className="text-gray-500">
                   {hasActiveSub ? '구독중입니다.' : '구독중인 서비스가 없습니다.'}
                 </div>
                 <button
-                  className="px-3 py-2 text-sm bg-token-interactive-accent-default text-white rounded-md hover:bg-token-interactive-accent-hover transition-colors"
+                  className="px-3 py-2 text-sm bg-indigo-500 text-white rounded hover:bg-indigo-600"
                   onClick={() => navigate(hasActiveSub ? '/subscription/manage' : '/subscription')}
                 >
                   {hasActiveSub ? '구독 관리' : '구독 하러가기'}
@@ -168,10 +159,10 @@ const MyPageModal = ({ open, onClose }) => {
               </div>
               
               {hasActiveSub && (
-                <div className="mt-4 p-4 bg-token-surface-success rounded-lg">
-                  <h4 className="font-medium text-token-text-success mb-2">구독 상세 정보</h4>
-                  <p className="text-sm text-token-text-success">구독 기간: 2024.01.01 ~ 2024.12.31</p>
-                  <p className="text-sm text-token-text-success">구독 요금: 월 29,000원</p>
+                <div className="mt-4 p-4 bg-green-50 rounded-lg">
+                  <h4 className="font-medium text-green-800 mb-2">구독 상세 정보</h4>
+                  <p className="text-sm text-green-700">구독 기간: 2024.01.01 ~ 2024.12.31</p>
+                  <p className="text-sm text-green-700">구독 요금: 월 29,000원</p>
                 </div>
               )}
             </div>
@@ -190,9 +181,8 @@ const MyPageModal = ({ open, onClose }) => {
       onCancel={handleClose}
       footer={null}
       width={800}
-      className="mypage-modal"
     >
-      <div className="text-center py-10 text-token-text-primary">로딩중...</div>
+      <div className="text-center py-10">로딩중...</div>
     </Modal>
   )
 
@@ -203,9 +193,8 @@ const MyPageModal = ({ open, onClose }) => {
       onCancel={handleClose}
       footer={null}
       width={800}
-      className="mypage-modal"
     >
-      <div className="text-token-text-error text-center py-10">에러: {error}</div>
+      <div className="text-red-500 text-center py-10">에러: {error}</div>
     </Modal>
   )
 
@@ -218,78 +207,96 @@ const MyPageModal = ({ open, onClose }) => {
         footer={null}
         width={1000}
         style={{ top: 20 }}
-        className="mypage-modal"
       >
         <main className="flex gap-6">
           {/*왼쪽 네비게이션 메뉴 */}
-          <div className="w-64 flex-shrink-0 bg-token-bg-elevated-secondary border-token-border-light border-r">
-            <nav className="w-full p-4 space-y-2 flex flex-col">
-              <button
-                onClick={() => setActiveTab('account')}
-                className={`w-full text-left px-4 py-3 rounded-md transition-all duration-200 ${
-                  activeTab === 'account'
-                    ? 'bg-token-main-surface-secondary text-token-text-primary border-l-4 border-token-interactive-accent-default'
-                    : 'text-token-text-primary hover:bg-token-main-surface-secondary'
-                }`}
-              >
-                <span className="font-medium">계정</span>
-              </button>
-              
-              <button
-                onClick={() => setActiveTab('subscription')}
-                className={`w-full text-left px-4 py-3 rounded-md transition-all duration-200 ${
-                  activeTab === 'subscription'
-                    ? 'bg-token-main-surface-secondary text-token-text-primary border-l-4 border-token-interactive-accent-default'
-                    : 'text-token-text-primary hover:bg-token-main-surface-secondary'
-                }`}
-              >
-                <span className="font-medium">구독</span>
-              </button>
-            </nav>
+          <div className="w-64 flex-shrink-0">
+            <div className="flex flex-col items-center space-y-3 mb-6">
+              <nav className="space-y-1">
+                <button
+                  onClick={() => setActiveTab('account')}
+                  className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
+                    activeTab === 'account'
+                      ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-500'
+                      : 'text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="flex items-center space-x-3">
+                    <span className="font-medium">계정</span>
+                  </div>
+                </button>
+                
+                {/* <button
+                  onClick={() => setActiveTab('payment')}
+                  className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
+                    activeTab === 'payment'
+                      ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-500'
+                      : 'text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="flex items-center space-x-3">
+                    <span className="font-medium">결제</span>
+                  </div>
+                </button> */}
+                
+                <button
+                  onClick={() => setActiveTab('subscription')}
+                  className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
+                    activeTab === 'subscription'
+                      ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-500'
+                      : 'text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="flex items-center space-x-3">
+                    <span className="font-medium">구독</span>
+                  </div>
+                </button>
+              </nav>
+            </div>
           </div>
 
           {/* 오른쪽 콘텐츠 영역 */}
-          <div className="flex-1 mypage-content">
+          <div className="flex-1">
             {/* 이메일 인증 필요 섹션 */}
             {user && !user.emailVerified && (
-              <div className="w-full p-4 bg-amber-50 border border-amber-200 rounded-lg mb-6 shadow-sm">
-                <h2 className="text-lg font-semibold text-amber-800 mb-2">이메일 인증 필요</h2>
-                <p className="text-amber-700 mb-3">계정을 안전하게 사용하기 위해 이메일 인증을 완료해주세요.</p>
-                <div className="flex gap-2">
-                  <button 
-                      onClick={handleResendVerification}
-                      disabled={resendLoading || resendCooldown > 0}
-                      className="px-4 py-2 bg-amber-500 text-white rounded-md hover:bg-amber-600 disabled:opacity-50 text-sm transition-colors"
-                  >
-                      {resendLoading
-                          ? '발송 중...'
-                          : resendCooldown > 0
-                          ? `재발송 (${resendCooldown}초 후)`
-                          : '인증 메일 재발송'}
-                  </button>
-                  <button onClick={() => dispatch(fetchUserProfileThunk())}
-                    className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 text-sm transition-colors"
-                  >
-                      새로고침
-                  </button>
-                </div>
-                  {resendCooldown > 0 && (
-                    <p className="text-amber-700 text-sm mt-3 mb-0">
-                      스팸 방지를 위해 잠시 후 다시 시도해주세요.
-                    </p>
-                  )}
+              <div className="w-full">
+                <h2>이메일 인증 필요</h2>
+                <p>계정을 안전하게 사용하기 위해 이메일 인증을 완료해주세요.</p>
+                <button 
+                    onClick={handleResendVerification}
+                    disabled={resendLoading || resendCooldown > 0}
+                >
+                    {resendLoading
+                        ? '발송 중...'
+                        : resendCooldown > 0
+                        ? `재발송 (${resendCooldown}초 후)`
+                        : '인증 메일 재발송'}
+                </button>
+                <button onClick={() => dispatch(fetchUserProfileThunk())}>
+                    새로고침
+                </button>
+                {resendCooldown > 0 && (
+                  <p style={{ 
+                      color: '#856404', 
+                      fontSize: '14px', 
+                      marginTop: '10px',
+                      marginBottom: 0 
+                  }}>
+                    스팸 방지를 위해 잠시 후 다시 시도해주세요.
+                  </p>
+                )}
               </div>
             )}
             {/*이메일 인증 완료 섹션 */}
             {user && user.emailVerified && (
               <article>
                 <div className="mb-6">
-                  <h3 className="text-2xl font-semibold text-token-text-primary">
+                  <h3 className="text-2xl font-semibold text-gray-800">
                     {activeTab === 'account' && '계정 정보'}
                     {/* {activeTab === 'payment' && '결제 관리'} */}
                     {activeTab === 'subscription' && '구독 관리'}
                   </h3>
-                  <p className="text-token-text-secondary mt-1">
+                  <p className="text-gray-600 mt-1">
                     {activeTab === 'account' && '계정 정보를 확인하고 수정할 수 있습니다.'}
                     {/* {activeTab === 'payment' && '결제 수단과 결제 내역을 관리할 수 있습니다.'} */}
                     {activeTab === 'subscription' && '구독 상태와 구독 정보를 확인할 수 있습니다.'}

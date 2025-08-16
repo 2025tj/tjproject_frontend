@@ -40,23 +40,50 @@ const UserEditform = () => {
   if (!user) return null // 또는 <div>로딩 중...</div>
 
   return (
-    <div>
-        <input
-            name="nickname"
-            value={form.nickname}
-            onChange={handleChange}
-            placeholder="닉네임"
-        />
-        <input
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-            placeholder="새 비밀번호"
-            type="password"
-        />
-        <button onClick={handleSubmit} disabled={loading}>
-            {loading ? '수정 중...' : '정보 수정'}
-        </button>
+    <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-token-text-primary mb-4">사용자 정보 수정</h3>
+        <div className="space-y-3">
+            <div>
+                <label className="block text-sm font-medium text-token-text-secondary mb-2">
+                    닉네임
+                </label>
+                <input
+                    name="nickname"
+                    value={form.nickname}
+                    onChange={handleChange}
+                    placeholder="닉네임을 입력하세요"
+                    className="w-full px-3 py-2 border border-token-border-light rounded-md focus:outline-none focus:ring-2 focus:ring-token-interactive-accent-default focus:border-transparent transition-colors"
+                />
+            </div>
+            <div>
+                <label className="block text-sm font-medium text-token-text-secondary mb-2">
+                    새 비밀번호
+                </label>
+                <input
+                    name="password"
+                    value={form.password}
+                    onChange={handleChange}
+                    placeholder="새 비밀번호를 입력하세요"
+                    type="password"
+                    className="w-full px-3 py-2 border border-token-border-light rounded-md focus:outline-none focus:ring-2 focus:ring-token-interactive-accent-default focus:border-transparent transition-colors"
+                />
+            </div>
+            <div className="mt-3 p-3 bg-token-main-surface-secondary rounded-md">
+                <p className="text-sm text-token-text-secondary">
+                    비밀번호는 변경하지 않으려면 빈 칸으로 두세요.
+                </p>
+            </div>
+            <div className="pt-2">
+                <button 
+                    onClick={handleSubmit} 
+                    disabled={loading}
+                    className="w-full px-4 py-2 bg-token-interactive-accent-default text-white rounded-md hover:bg-token-interactive-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                >
+                    {loading ? '수정 중...' : '정보 수정'}
+                </button>
+            </div>
+            
+        </div>
     </div>
   )
 }

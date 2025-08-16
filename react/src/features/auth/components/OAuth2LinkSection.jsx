@@ -115,6 +115,24 @@ const OAuth2LinkSection = ({ onLinkSuccess }) => {
       alert('연동 해제 실패');
     }
   };
+
+  const getProviderInfo = (provider) => {
+    const providerInfo = {
+      google: {
+        name: 'Google',
+        color: 'bg-red-500 hover:bg-red-600',
+        // icon: '🔍',
+        description: 'Google 계정으로 로그인'
+      },
+      kakao: {
+        name: 'Kakao',
+        color: 'bg-yellow-400 hover:bg-yellow-500',
+        // icon: '💬',
+        description: 'Kakao 계정으로 로그인'
+      }
+    };
+    return providerInfo[provider] || { name: provider, color: 'bg-gray-500', icon: '��' };
+  };
     
   // const closeModal = () => {
   //   setModalOpen(false);
@@ -122,25 +140,56 @@ const OAuth2LinkSection = ({ onLinkSuccess }) => {
   // };
 
   return (
-    <div>
-      <h2>소셜 계정 연동</h2>
-      {supportedProviders.map((provider) => {
-        const isLinked = linkedProviders.includes(provider);
-        return (
-          <div key={provider}>
-            <span>{provider}: {isLinked ? '연동됨' : '연동안됨'}</span>
-            {isLinked ? (
-              <button onClick={() => handleSocialUnlink(provider)} disabled={isProcessing}>
-                연동해제
-              </button>
-            ) : (
-              <button onClick={() => handleSocialLink(provider)} disabled={isProcessing}>
-                {isProcessing ? '처리중...' : '연동하기'}
-              </button>
-            )}
-          </div>
-        );
-      })}
+    <div className="space-y-4">
+      <h3 className="text-lg font-semibold text-token-text-primary mb-4">소셜 계정 연동</h3>
+      <div className="space-y-3">
+        {supportedProviders.map((provider) => {
+          const isLinked = linkedProviders.includes(provider);
+          const providerInfo = getProviderInfo(provider);
+          return (
+            <div key={provider} className="flex items-center justify-between p-4 bg-token-main-surface-secondary rounded-lg border border-token-border-light">
+              <div className="flex items-center space-x-3">
+                <div className="text-2xl">{providerInfo.icon}</div>
+                <div>
+                  <h4 className="font-medium text-token-text-primary">{providerInfo.name}</h4>
+                  <p className="text-sm text-token-text-secondary">{providerInfo.description}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                {isLinked ? (
+                  <>
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-token-surface-success text-token-text-success">
+                      연동됨
+                    </span>
+                    <button 
+                      onClick={() => handleSocialUnlink(provider)} 
+                      disabled={isProcessing}
+                      className="px-3 py-1.5 text-sm text-token-text-error bg-white border border-token-border-light rounded-md hover:bg-token-main-surface-secondary transition-colors disabled:opacity-50"
+                    >
+                      연동해제
+                    </button>
+                  </>
+                ) : (
+                  <button 
+                    onClick={() => handleSocialLink(provider)} 
+                    disabled={isProcessing}
+                    className={`px-4 py-2 text-sm text-white rounded-md transition-colors disabled:opacity-50 ${providerInfo.color}`}
+                  >
+                    {isProcessing ? '처리중...' : '연동하기'}
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* <div className="mt-4 p-3 bg-token-main-surface-secondary rounded-lg">
+        <p className="text-sm text-token-text-secondary">
+          소셜 계정을 연동하면 더 안전하고 편리하게 서비스를 이용할 수 있습니다.
+        </p>
+      </div> */}
 
       {/* <Modal isOpen={modalOpen} onClose={closeModal}>
         <OAuth2LinkModal
