@@ -1,6 +1,6 @@
 import React from "react";
 import { Layout, Menu } from "antd";
-import { UserOutlined, MessageOutlined, TeamOutlined, DollarOutlined, SaveTwoTone, RedoOutlined } from "@ant-design/icons";
+import { UserOutlined, MessageOutlined, TeamOutlined } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 
 const { Sider } = Layout;
@@ -12,33 +12,17 @@ const AdSide = () => {
     { 
       key: "admin-info",
       icon: <UserOutlined />,
-      label: <Link to="/mypage">관리자 정보</Link>,
-      // label: <Link to="/admin">관리자 정보</Link>,
+      label: <Link to="/Admin">관리자 정보</Link>,
     },
     {
       key: "inquiries",
       icon: <MessageOutlined />,
-      label: <Link to="/admin/inquiries">문의요청사항</Link>,
+      label: <Link to="/Admin/inquiries">문의요청사항</Link>,
     },
     {
       key: "member-management",
       icon: <TeamOutlined />,
-      label: <Link to="/admin/members">회원관리</Link>,
-    },
-    { 
-      key: "user-info",
-      icon: <UserOutlined />,
-      label: <Link to="/admin/users">회원 정보</Link>,
-    },
-    {
-      key: "refunds",
-      icon: <DollarOutlined />,
-      label: <Link to="/admin/refunds">환불관리</Link>,
-    },
-    {
-      key: "refresh-tokens",
-      icon: <RedoOutlined />,
-      label: <Link to="/admin/refresh-tokens">refresh-tokens관리</Link>,
+      label: <Link to="/Admin/members">회원관리</Link>,
     },
   ];
 
@@ -46,7 +30,7 @@ const AdSide = () => {
   const getSelectedKey = () => {
     if (location.pathname.includes('/inquiries')) return 'inquiries';
     if (location.pathname.includes('/members')) return 'member-management';
-    // return 'admin-info';
+    return 'admin-info';
   };
 
   return (

@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 
-const MentionChannelCard = ({ height = 561 }) => {
+const MentionChannelCard = () => {
   const [searchParams] = useSearchParams();
   const companyName = searchParams.get('company') || '회사 이름';
   const [newsList, setNewsList] = useState([]);
@@ -45,7 +45,7 @@ const MentionChannelCard = ({ height = 561 }) => {
   const displayTitle = selectedKeyword ? `${companyName} - ${selectedKeyword}` : companyName;
 
   return (
-         <div className="w-[100%] rounded-2xl bg-white p-4 flex flex-col gap-3 shadow-md" style={{ height: `${height}px` }}>
+         <div className="w-[100%] h-[561px] rounded-2xl bg-white p-4 flex flex-col gap-3 shadow-md">
        <h2 className="text-center text-xl font-semibold">{displayTitle} 최신기사</h2>
 
       {loading ? (

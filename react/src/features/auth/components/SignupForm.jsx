@@ -48,7 +48,7 @@ const SignupForm = () => {
     }
   return (
     <>
-        <form onSubmit={handleSubmit} style={{ maxWidth: 400 }} className='bg-white p-8 rounded shadow-md w-full max-w-md'>
+        <form onSubmit={handleSubmit} style={{ maxWidth: 400 }}>
             <div>
                 <label>이메일</label><br />
                 <input
