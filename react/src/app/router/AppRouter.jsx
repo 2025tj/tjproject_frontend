@@ -12,6 +12,7 @@ import OAuth2Redirect from "../../features/auth/pages/OAuth2Redirect";
 import PrivateRoute from "./PrivateRoute";
 import { useDispatch, useSelector } from "react-redux";
 import MyPage from "../../features/user/pages/MyPage";
+import MyPageChatGPT from "../../features/user/pages/MyPageChatGPT";
 import EmailVerify from "../../features/email/pages/EmailVerify";
 // import Header from '../../shared/components/layout/Header'
 import SignupPage from "../../features/auth/pages/SignupPage";
@@ -116,6 +117,7 @@ const AppRouter = () => {
 
           {/* 마이페이지 - 인증 필요 */}
           <Route path="/mypage" element={<ProtectedMyPage />} />
+          <Route path="/mypage-chatgpt" element={<MyPageChatGPT />} />
 
           {/* 구독페이지 */}
           <Route path="/subscribe" element={<Subscribe />} />

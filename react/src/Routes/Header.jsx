@@ -9,10 +9,12 @@ import Login from "./Login"
 import { useDispatch, useSelector } from "react-redux";
 import { logoutThunk } from "../features/auth/store/authThunk";
 import LoginFormModal from "@features/auth/components/LoginFormModal";
+import MyPageModal from "../features/user/components/MyPageModal";
 
 const Header = ({  toRegister, handleNavigation, SearchBar }) => {
   // const isAuthenticated = useSelector(state => state.auth.isAuthenticated)
   const { isAuthenticated, user } = useSelector((state) => state.auth)
+  const [isMyPageModalOpen, setIsMyPageModalOpen] = useState(false)
   const dispatch = useDispatch()
   
   const [LoginModal, setLoginModal]= useState(false)
@@ -61,7 +63,15 @@ const Header = ({  toRegister, handleNavigation, SearchBar }) => {
                     {/* <li><Link to='/admin/dashboard'>관리자 대시보드</Link></li> */}
                   </>
                 )}
-                <li><Link to="/mypage">마이페이지</Link></li>
+                {/* <li><Link to="/mypage">마이페이지</Link></li> */}
+                  <button onClick={() => setIsMyPageModalOpen(true)}>
+                    마이페이지
+                  </button>
+                  
+                  <MyPageModal 
+                    open={isMyPageModalOpen} 
+                    onClose={() => setIsMyPageModalOpen(false)} 
+                  />
                 </>
               )}
             </ul>

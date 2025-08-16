@@ -59,8 +59,8 @@ const PasswordResetPage = () => {
   // 토큰이 유효함
   return (
     <div>
-      <h2>새 비밀번호 설정</h2>
-      <p>새로운 비밀번호를 입력해주세요.</p>
+      {/* <h2>새 비밀번호 설정</h2>
+      <p>새로운 비밀번호를 입력해주세요.</p> */}
       <PasswordResetForm token={token} />
     </div>
   )

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { api } from '@shared/utils/api'
+import { Link, useNavigate } from 'react-router-dom'
 import UserEditform from '../components/UserEditform'
 import OAuth2LinkSection from '../../auth/components/OAuth2LinkSection'
 import { fetchUserProfileThunk} from '../store/userThunk'
@@ -18,7 +19,9 @@ const MyPage = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { hasActiveSub } = useSubscription()
+  const [isOpen, setIsOpen] = useState(false)
   const [withdrawOpen, setWithdrawOpen] = useState(false)
+
 
   useEffect(() => {
     dispatch(fetchUserProfileThunk())
