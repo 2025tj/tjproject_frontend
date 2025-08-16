@@ -156,7 +156,7 @@ api.interceptors.response.use(
         // 이미 다른 요청이 refresh중이면: refresh 완료까지 대기했다가 새 토큰으로 재시도
         if (refreshPromise) {
           return new Promise((resolve) => {
-            subscribeTokenRefresh((newAcess) => {
+            subscribeTokenRefresh((newAccess) => {
               originalRequest.headers = originalRequest.headers || {}
               originalRequest.headers.Authorization = `Bearer ${newAccess}`
               resolve(api(originalRequest)) // 새토큰으로 원 요청 재시도

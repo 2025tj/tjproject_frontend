@@ -14,9 +14,12 @@ export default function EmailVerify() {
 
   // 1. 토큰으로 백엔드에 인증 요청
   useEffect(() => {
+    console.log('EmailVerify Component mounted')
+    console.log('token : ', token)
     if (hasRun.current) return
     hasRun.current = true;
     if (!token) {
+      console.log('token is null' )
       setResult('토큰 정보가 없습니다.');
       return;
     }
@@ -30,17 +33,41 @@ export default function EmailVerify() {
   //       );
   //     });
   // }, [token]);
+
+    console.log('emailService.verifyToken(token) : url= ', window.location.href)
     emailService
       .verifyToken(token)
       .then((message) => {
+        console.log('emailService.verifyToken(token) : message= ', message)
         setResult(message)
+        if (message === '이메일 인증이 완료되었습니다.') {
+          console.log('fetchUserProfileThunk()')
         // 인증 성공 시 사용자 정보 최신화
-        dispatch(fetchUserProfileThunk())
+          dispatch(fetchUserProfileThunk())
+            .then((result) => {
+              console.log('fetchUserProfileThunk() : result= ', result)
+            })
+            .catch((err) => {
+              console.log('fetchUserProfileThunk() : err= ', err)
+            })
+        } else {
+          console.error('fetchUserProfileThunk() failed ', message)
+        }
       })
       .catch((err) => {
+        console.error('emailService.verifyToken(token) : failed ', err)
+        console.error('err.message : ', {
+          message: err.message,
+          response: err.response,
+          status: err.response?.status,
+          data: err.response?.data
+        })
         setResult(
           err.message || '알 수 없는 오류로 인증에 실패했습니다.'
-        )
+        );
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 2000);
       })
   }, [token, dispatch])
 

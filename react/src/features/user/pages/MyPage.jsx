@@ -43,6 +43,10 @@ const MyPage = () => {
     dispatch(checkSubStatThunk())
   }, [dispatch])
 
+  const handleLinkSuccess = () => {
+    dispatch(fetchUserProfileThunk())
+  }
+
   const handleResendVerification = async () => {
     if (resendLoading || resendCooldown > 0) return
     setResendLoading(true)
@@ -193,7 +197,7 @@ const MyPage = () => {
               </div>
             </div>
 
-            <OAuth2LinkSection />
+            <OAuth2LinkSection onLinkSuccess={handleLinkSuccess}/>
             <UserEditform />
 
             <div className="pt-10 text-right">

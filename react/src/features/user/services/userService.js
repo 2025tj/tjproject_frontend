@@ -13,7 +13,9 @@ export const userService = {
 
   getProfile: async () => {
     try {
-      return await userApi.getProfile()
+      const res =  await userApi.getProfile()
+      console.log('userprofile : ', res)
+      return res
     } catch (err) {
       throw new ApiError(err?.response?.data || err)
     }

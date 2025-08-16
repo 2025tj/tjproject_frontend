@@ -5,7 +5,7 @@ import Modal from '@shared/components/ui/Modal/Modal';
 // import OAuth2LinkModal from '../../../components/modals/OAuth2LinkModal';
 import { getAccessToken } from '../utils';
 
-const OAuth2LinkSection = () => {
+const OAuth2LinkSection = ({ onLinkSuccess }) => {
   const [linkedProviders, setLinkedProviders] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -20,7 +20,7 @@ const OAuth2LinkSection = () => {
     try {
       const data = await userService.getLinkedProviders();
       console.log('Section/getLinkedProviders(): ', data)
-      setLinkedProviders(data);  
+      setLinkedProviders(data); 
     } catch (error) {
       console.error('연동된 계정 조회 실패:', error);
     }
@@ -58,6 +58,11 @@ const OAuth2LinkSection = () => {
 
       if (event.data?.type === 'SOCIAL_LINK_SUCCESS') {
         // alert(`${event.data.provider} 계정 연동 완료`)
+
+        if (onLinkSuccess) {
+          onLinkSuccess()
+        }
+
         fetchLinkedProviders()
       } else if (event.data?.type === 'SOCIAL_LINK_FAIL') {
         alert(`연동 실패: ${event.data.reason}`)
