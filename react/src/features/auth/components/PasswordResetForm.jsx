@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Input, Button } from 'antd'
 import { authService } from '../services'
 
 const PasswordResetForm = ({ token }) => {
@@ -58,6 +59,69 @@ const PasswordResetForm = ({ token }) => {
   }
 
   return (
+    <div className="password-reset-container">
+      <div className="password-reset-header">
+        <h2 className="password-reset-title">새 비밀번호 설정</h2>
+        <p className="password-reset-description">
+          새로운 비밀번호를 입력하세요.
+        </p>
+      </div>
+      <form onSubmit={handleSubmit} className="password-reset-form">
+        <div className="form-field">
+          <Input.Password
+          id="newPassword"
+          name="newPassword"
+          value={formData.newPassword}
+          onChange={handleChange}
+          required
+          minLength={8}
+          placeholder="새 비밀번호 (8자 이상)"
+          disabled={loading}
+          size="large"
+          className="form-input"
+          />
+        </div>
+        <div className="form-field">
+          <Input.Password
+          id="confirmPassword"
+          name="confirmPassword"
+          value={formData.confirmPassword}
+          onChange={handleChange}
+          required
+          minLength={8}
+          placeholder="비밀번호 다시 입력"
+          disabled={loading}
+          size="large"
+          className="form-input"
+          />
+        </div>
+        <div className="form-submit">
+          <button
+            type="submit"
+            disabled={loading || !formData.newPassword || !formData.confirmPassword}
+            className="submit-button"
+            style={{
+              width: '100%',
+              padding: '12px 16px',
+              fontSize: '16px',
+              border: 'none',
+              borderRadius: '8px',
+              backgroundColor: loading ? '#ccc' : '#1890ff',
+              color: 'white',
+              cursor: loading ? 'not-allowed' : 'pointer'
+            }}
+          >
+            {loading ? '재설정 중...' : '비밀번호 재설정'}
+          </button>
+        </div>
+      </form>
+      {message && (
+        <div className={`message ${message.includes('성공적으로') ? 'success-message' : 'error-message'}`}>
+          {message}
+        </div>
+      )}
+    
+    {/* </div>
     <form onSubmit={handleSubmit}>
       <div>
         <label htmlFor="newPassword">새 비밀번호:</label>
@@ -101,7 +165,8 @@ const PasswordResetForm = ({ token }) => {
           {message}
         </p>
       )}
-    </form>
+    </form> */}
+    </div>
   )
 }
 

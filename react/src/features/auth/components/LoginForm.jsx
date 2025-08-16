@@ -5,7 +5,7 @@ import { loginThunk, reactivateThunk } from '../store/authThunk'
 import { clearWarning, clearError, setError } from '../store/authSlice'
 import { Input, Modal, message } from 'antd'
 
-const LoginForm = () => {
+const LoginForm = ({resetForm}) => {
   const [form, setForm] = useState({ email: '', password: '' })
   // const [error, setError] = useState('')
   const [showRestoreModal, setShowRestoreModal] = useState(false)
@@ -15,6 +15,14 @@ const LoginForm = () => {
   const location = useLocation()
 
   const { loading, warning, error } = useSelector(state => state.auth)
+
+  useEffect(() => {
+    if (resetForm) {
+      setForm({email: '', password: ''})
+      setShowRestoreModal(false)
+      setRestorePwd('')
+    }
+  },[resetForm])
 
   // OAuth2 실패로 넘어온 메시지 처리
   useEffect(() => {
@@ -100,29 +108,39 @@ const LoginForm = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      {error && <p style={{color:'red'}}>{error}</p>}
-      {warning && <p style={{ color: 'orange' }}>{warning}</p>}
-      <Input
-        type="email"
-        name="email"
-        placeholder="이메일"
-        value={form.email}
-        onChange={handleChange}
-        style={{marginBottom:10}}
-        autoComplete='email'
-      /><br />
-      <Input.Password
-        name="password"
-        placeholder="비밀번호"
-        value={form.password}
-        onChange={handleChange}
-        style={{marginBottom:10}}
-        autoComplete='current-password'
-      /><br />
-      <button type="submit"disabled={loading}>
-        {loading ? '로그인 중...' : '로그인'}
-      </button>
+    <div className="login-form-container">
+      <form onSubmit={handleSubmit} className="login-form">
+        {error && <div className="error-message">{error}</div>}
+        {warning && <div className="warning-message">{warning}</div>}
+        <div className="form-field">
+          <Input
+            type="email"
+            name="email"
+            placeholder="이메일 주소"
+            value={form.email}
+            onChange={handleChange}
+            className="form-input"
+            autoComplete='email'
+            size="large"
+          />
+        </div>
+        <div className="form-field">
+          <Input.Password
+            name="password"
+            placeholder="비밀번호"
+            value={form.password}
+            onChange={handleChange}
+            className="form-input"
+            autoComplete='current-password'
+            size="large"
+          />
+        </div>
+        <div className="form-submit">
+          <button type="submit" disabled={loading} className="submit-button">
+            {loading ? '로그인 중...' : '로그인'}
+          </button>
+        </div>
+      </form>
 
       {/* 계정 복구 모달 */}
       <Modal
@@ -132,7 +150,7 @@ const LoginForm = () => {
         onCancel={()=>setShowRestoreModal(false)}
         okText='복구'
         cancelText='취소'
-        confirmLoading={loading} // 전역 loading 사용
+        confirmLoading={loading}
         okButtonProps={{
           style: {
             backgroundColor: '#1677ff',
@@ -148,7 +166,56 @@ const LoginForm = () => {
           onChange={e => setRestorePwd(e.target.value)}
         />
       </Modal>
-    </form>
+    </div>
+    // <form onSubmit={handleSubmit}>
+    //   {error && <p style={{color:'red'}}>{error}</p>}
+    //   {warning && <p style={{ color: 'orange' }}>{warning}</p>}
+    //   <Input
+    //     type="email"
+    //     name="email"
+    //     placeholder="이메일"
+    //     value={form.email}
+    //     onChange={handleChange}
+    //     style={{marginBottom:10}}
+    //     autoComplete='email'
+    //   /><br />
+    //   <Input.Password
+    //     name="password"
+    //     placeholder="비밀번호"
+    //     value={form.password}
+    //     onChange={handleChange}
+    //     style={{marginBottom:10}}
+    //     autoComplete='current-password'
+    //   /><br />
+    //   <button type="submit"disabled={loading}>
+    //     {loading ? '로그인 중...' : '로그인'}
+    //   </button>
+
+    //   {/* 계정 복구 모달 */}
+    //   <Modal
+    //     title='계정 복구'
+    //     open={showRestoreModal}
+    //     onOk={handleRestore}
+    //     onCancel={()=>setShowRestoreModal(false)}
+    //     okText='복구'
+    //     cancelText='취소'
+    //     confirmLoading={loading} // 전역 loading 사용
+    //     okButtonProps={{
+    //       style: {
+    //         backgroundColor: '#1677ff',
+    //         color: 'white'
+    //       }
+    //     }}
+    //   >
+    //     <p>탈퇴 유예 중인 계정입니다. 복구하려면 비밀번호를 입력하세요.</p>
+    //     <Input value={form.email} disabled style={{marginBottom: 8}} />
+    //     <Input.Password
+    //       placeholder='비밀번호'
+    //       value={restorePwd}
+    //       onChange={e => setRestorePwd(e.target.value)}
+    //     />
+    //   </Modal>
+    // </form>
   )
 }
 

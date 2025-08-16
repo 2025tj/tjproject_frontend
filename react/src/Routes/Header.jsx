@@ -8,6 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Login from "./Login"
 import { useDispatch, useSelector } from "react-redux";
 import { logoutThunk } from "../features/auth/store/authThunk";
+import LoginFormModal from "@features/auth/components/LoginFormModal";
 
 const Header = ({  toRegister, handleNavigation, SearchBar }) => {
   // const isAuthenticated = useSelector(state => state.auth.isAuthenticated)
@@ -77,7 +78,7 @@ const Header = ({  toRegister, handleNavigation, SearchBar }) => {
                     <>
                       <button onClick={()=>setLoginModal(true)}>로그인</button>
                       {/* Login에서 전달한 props 받아서 사용 */}
-                      <Login open={LoginModal} onclose={()=> setLoginModal(false)}></Login>
+                      <LoginFormModal open={LoginModal} onclose={()=> setLoginModal(false)}></LoginFormModal>
                       <button onClick={toRegister}>회원가입</button>
                     </>
                     
