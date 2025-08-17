@@ -196,7 +196,18 @@ const AppRouter = () => {
           />
           {/*관리자페이지*/}
           {/* <Route path='/admin/users' element={<ProtectedAdminUserPage />} /> */}
-          <Route element={<ProtectedAdminRoute />}>
+          <Route element ={<ProtectedAdminRoute />}>
+              <Route path='/admin/dashboard' element={<AdminDashboard />} />
+              <Route path='/admin/users' element={<AdminUserPage />} />
+              <Route path='/admin/refunds' element={<AdminRefundPage />} />
+              <Route path='/admin/refresh-tokens' element={<AdminRefreshTokenPage />} />
+              <Route path="/admin/inquiries" element={<Inquiries />} />
+          </Route>
+              
+
+          {/*관리자페이지*/}
+          {/* <Route path='/admin/users' element={<ProtectedAdminUserPage />} /> */}
+          {/* <Route element={<ProtectedAdminRoute />}>
             <Route path="/admin" element={<Admin />}>
               <Route path="inquiries" element={<Inquiries />}></Route>
               <Route path="members" element={<Members />}></Route>
@@ -207,7 +218,7 @@ const AppRouter = () => {
                 path="/admin/refresh-tokens"
                 element={<AdminRefreshTokenPage />}/>
             </Route>
-          </Route>
+          </Route> */}
         </Routes>
       </main>
       <Footer />

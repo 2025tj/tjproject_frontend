@@ -11,11 +11,13 @@ import { useSubscription } from '../../subscription/hooks/useSubscription'
 import { checkSubStatThunk } from '../../subscription/store/subscriptionThunk'
 import WithdrawModal from './WithdrawModal'
 import '../css/MyPageModal.css'
+import { formatPrice, formatDate } from '../../subscription/utils/formatUtils.js'
 
 const MyPageModal = ({ open, onClose }) => {
   const user = useSelector((state) => state.user.profile)
   const loading = useSelector((state) => state.user.loading)
   const error = useSelector((state) => state.user.error)
+  const { subscriptionDetails, isActive } = useSelector(state => state.subscription)
   const [resendLoading, setResendLoading] = useState(false)
   const [resendCooldown, setResendCooldown] = useState(0)
   const [activeTab, setActiveTab] = useState('account')
@@ -161,17 +163,40 @@ const MyPageModal = ({ open, onClose }) => {
                 </div>
                 <button
                   className="px-3 py-2 text-sm bg-token-interactive-accent-default text-white rounded-md hover:bg-token-interactive-accent-hover transition-colors"
-                  onClick={() => navigate(hasActiveSub ? '/subscription/manage' : '/subscription')}
+                  onClick={() => {
+                    navigate(hasActiveSub ? '/subscription/manage' : '/subscription')
+                    onClose()
+                  }}
                 >
                   {hasActiveSub ? '구독 관리' : '구독 하러가기'}
                 </button>
               </div>
               
-              {hasActiveSub && (
+              {/* {hasActiveSub && (
                 <div className="mt-4 p-4 bg-token-surface-success rounded-lg">
                   <h4 className="font-medium text-token-text-success mb-2">구독 상세 정보</h4>
                   <p className="text-sm text-token-text-success">구독 기간: 2024.01.01 ~ 2024.12.31</p>
                   <p className="text-sm text-token-text-success">구독 요금: 월 29,000원</p>
+                </div>
+              )} */}
+              {hasActiveSub && subscriptionDetails && (
+                <div className="mt-4 p-4 bg-token-surface-success rounded-lg">
+                  <h4 className="font-medium text-token-text-success mb-2">구독 상세 정보</h4>
+                  <div className="space-y-2 text-sm text-token-text-success">
+                    <p>플랜: {
+                      (() => {
+                        switch(subscriptionDetails.plan?.name) {
+                          case 'trial': return '무료 체험';
+                          case 'monthly': return '월간 구독';
+                          case 'yearly': return '연간 구독';
+                          default: return '알 수 없음';
+                        }
+                      })()
+                    }</p>
+                    <p>요금: {formatPrice(subscriptionDetails.plan?.price || 0)}</p>
+                    <p>시작일: {formatDate(subscriptionDetails.startDate)}</p>
+                    <p>만료일: {formatDate(subscriptionDetails.endDate)}</p>
+                  </div>
                 </div>
               )}
             </div>

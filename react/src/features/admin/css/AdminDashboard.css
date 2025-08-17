@@ -1,0 +1,272 @@
+/* AdminDashboard.css */
+.admin-dashboard {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--primary-gradient-start) 0%, var(--primary-gradient-end) 100%);
+  padding: var(--spacing-xl);
+}
+
+.dashboard-container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+}
+
+/* 헤더 스타일 */
+.dashboard-header {
+  margin-bottom: var(--spacing-3xl);
+  text-align: center;
+}
+
+.dashboard-title {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-white);
+  margin-bottom: var(--spacing-md);
+  text-shadow: var(--text-shadow-lg);
+}
+
+.dashboard-subtitle {
+  color: var(--color-white-alpha);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-light);
+}
+
+/* 메뉴 그리드 */
+.menu-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-3xl);
+}
+
+@media (min-width: 768px) {
+  .menu-grid {
+      grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .menu-grid {
+      grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.menu-item {
+  display: block;
+  padding: var(--spacing-2xl);
+  border-radius: var(--border-radius-xl);
+  background: var(--color-white-alpha);
+  backdrop-filter: var(--backdrop-blur);
+  border: 1px solid var(--color-white-border);
+  transition: all var(--transition-duration) var(--transition-timing);
+  text-decoration: none;
+  box-shadow: var(--shadow-lg);
+}
+
+.menu-item:hover {
+  transform: translateY(var(--transform-y));
+  box-shadow: var(--shadow-xl);
+  background: var(--color-white);
+}
+
+.menu-item-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xl);
+}
+
+.menu-text {
+  flex: 1;
+}
+
+.menu-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-sm);
+  transition: color var(--transition-duration) ease;
+}
+
+.menu-item:hover .menu-title {
+  color: var(--color-primary);
+}
+
+.menu-description {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+}
+
+.menu-arrow {
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-xl);
+  transition: all var(--transition-duration) ease;
+}
+
+.menu-item:hover .menu-arrow {
+  color: var(--color-primary);
+  transform: translateX(var(--transform-x));
+}
+
+/* 통계 카드 */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-xl);
+}
+
+@media (min-width: 768px) {
+  .stats-grid {
+      grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.stat-card {
+  background: var(--color-white-alpha);
+  backdrop-filter: var(--backdrop-blur);
+  border: 1px solid var(--color-white-border);
+  border-radius: var(--border-radius-xl);
+  padding: var(--spacing-2xl);
+  box-shadow: var(--shadow-lg);
+  transition: all var(--transition-duration) ease;
+}
+
+.stat-card:hover {
+  transform: translateY(var(--transform-y-sm));
+  box-shadow: var(--shadow-xl);
+}
+
+.stat-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stat-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.stat-value {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-text-primary);
+}
+
+.stat-value-success {
+  color: var(--color-success);
+}
+
+/* 애니메이션 */
+@keyframes fadeInUp {
+  from {
+      opacity: 0;
+      transform: translateY(var(--animation-distance));
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+.menu-item {
+  animation: fadeInUp var(--animation-duration) ease forwards;
+}
+
+.menu-item:nth-child(1) { animation-delay: var(--animation-delay-1); }
+.menu-item:nth-child(2) { animation-delay: var(--animation-delay-2); }
+.menu-item:nth-child(3) { animation-delay: var(--animation-delay-3); }
+
+.stat-card {
+  animation: fadeInUp var(--animation-duration) ease forwards;
+}
+
+.stat-card:nth-child(1) { animation-delay: var(--animation-delay-4); }
+.stat-card:nth-child(2) { animation-delay: var(--animation-delay-5); }
+.stat-card:nth-child(3) { animation-delay: var(--animation-delay-6); }
+.stat-card:nth-child(4) { animation-delay: var(--animation-delay-7); }
+
+/* CSS 변수 정의 */
+:root {
+  /* 색상 */
+  --color-white: #ffffff;
+  --color-white-alpha: rgba(255, 255, 255, 0.95);
+  --color-white-border: rgba(255, 255, 255, 0.2);
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #6b7280;
+  --color-text-tertiary: #9ca3af;
+  --color-primary: #667eea;
+  --color-success: #10b981;
+  
+  /* 그라데이션 */
+  --primary-gradient-start: #667eea;
+  --primary-gradient-end: #764ba2;
+  
+  /* 간격 */
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  --spacing-3xl: 4rem;
+  
+  /* 폰트 크기 */
+  --font-size-sm: 0.875rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 3rem;
+  
+  /* 폰트 굵기 */
+  --font-weight-light: 300;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  
+  /* 라인 높이 */
+  --line-height-relaxed: 1.6;
+  
+  /* 테두리 반경 */
+  --border-radius-xl: 1rem;
+  
+  /* 그림자 */
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.15);
+  
+  /* 텍스트 그림자 */
+  --text-shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.3);
+  
+  /* 백드롭 블러 */
+  --backdrop-blur: blur(10px);
+  
+  /* 전환 */
+  --transition-duration: 0.3s;
+  --transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* 변환 */
+  --transform-y: -8px;
+  --transform-y-sm: -4px;
+  --transform-x: 4px;
+  
+  /* 애니메이션 */
+  --animation-duration: 0.6s;
+  --animation-distance: 30px;
+  --animation-delay-1: 0.1s;
+  --animation-delay-2: 0.2s;
+  --animation-delay-3: 0.3s;
+  --animation-delay-4: 0.4s;
+  --animation-delay-5: 0.5s;
+  --animation-delay-6: 0.6s;
+  --animation-delay-7: 0.7s;
+  
+  /* 컨테이너 */
+  --container-max: 1200px;
+}
+
+/* AdminDashboard.css에 추가 */
+.menu-item-orange {
+  background: var(--color-white-alpha);
+  backdrop-filter: var(--backdrop-blur);
+  border: 1px solid var(--color-white-border);
+}

@@ -58,20 +58,18 @@ const Header = ({  toRegister, handleNavigation, SearchBar }) => {
                 <>
                 {isAdmin && (
                   <>
-                  {/* 둘중 아무거나? */}
-                    <li><Link to="/Admin" onClick={() => handleNavigation("Admin")}>관리자</Link></li>
-                    {/* <li><Link to='/admin/dashboard'>관리자 대시보드</Link></li> */}
+                    <li><Link to='/admin/dashboard'>관리자 대시보드</Link></li>
                   </>
                 )}
                 {/* <li><Link to="/mypage">마이페이지</Link></li> */}
-                  <button onClick={() => setIsMyPageModalOpen(true)}>
+                  {/* <button onClick={() => setIsMyPageModalOpen(true)}>
                     마이페이지
                   </button>
                   
                   <MyPageModal 
                     open={isMyPageModalOpen} 
                     onClose={() => setIsMyPageModalOpen(false)} 
-                  />
+                  /> */}
                 </>
               )}
             </ul>
@@ -83,6 +81,27 @@ const Header = ({  toRegister, handleNavigation, SearchBar }) => {
                   {isAuthenticated ? (
                     <>
                       <button onClick={handleLogout}>로그아웃</button>
+                      {/* 마이페이지 아이콘 */}
+                      <button 
+                      onClick={() => setIsMyPageModalOpen(true)}
+                      className="my-page-icon"
+                      title="마이페이지"
+                      style={{ marginLeft: '8px' }}
+                    >
+                      <svg 
+                        width="20" 
+                        height="20" 
+                        viewBox="0 0 24 24" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        strokeWidth="2" 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round"
+                      >
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                      </svg>
+                    </button>
                     </>   
                   ) : (
                     <>
@@ -117,6 +136,12 @@ const Header = ({  toRegister, handleNavigation, SearchBar }) => {
         {/* </div> */}
         {/* <CompanyRanking/> */}
       </header>
+
+      {/* 마이페이지 모달*/}
+      <MyPageModal 
+        open={isMyPageModalOpen} 
+        onClose={() => setIsMyPageModalOpen(false)} 
+      />
 
     </>
   );
