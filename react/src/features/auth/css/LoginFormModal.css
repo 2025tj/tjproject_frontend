@@ -201,16 +201,16 @@
 }
 
 .submit-button {
-  width: 100%;
-  height: 40px;
-  border: none;
-  border-radius: 8px;
-  background-color: #10A37F;
-  color: white;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  width: 100% !important;
+  height: 40px !important;
+  border: none !important;
+  border-radius: 8px !important;
+  background-color: #10A37F !important;
+  color: white !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: background-color 0.2s !important;
 }
 
 .submit-button:hover {
